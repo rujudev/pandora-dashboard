@@ -1,54 +1,33 @@
-# React + TypeScript + Vite
+## Configuración del Editor (Visual Studio Code)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto utiliza **ESLint** configurado con las reglas de **StandardJS** para TypeScript. Para garantizar que ESLint funcione correctamente y que las correcciones automáticas se apliquen al guardar, es necesario configurar el archivo `settings.json` en Visual Studio Code.
 
-Currently, two official plugins are available:
+### 1. Configuración de ESLint en Visual Studio Code
+Sigue estos pasos para añadir la configuración:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#### En macOS:
+1. Abre Visual Studio Code.
+2. Presiona `Cmd + Shift + P` para abrir la paleta de comandos.
+3. Busca y selecciona **"Preferences: Open Workspace Settings (JSON)"**.
+4. Agrega la siguiente configuración al archivo `.vscode/settings.json`:
 
-## Expanding the ESLint configuration
+#### En Windows/Linux:
+1. Abre Visual Studio Code.
+2. Presiona `Ctrl + Shift + P` para abrir la paleta de comandos.
+3. Busca y selecciona **"Preferences: Open Workspace Settings (JSON)"**.
+4. Agrega la siguiente configuración al archivo `.vscode/settings.json`:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
+```json
+{
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "always"
     },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+    "editor.formatOnSave": true,
+    "eslint.useFlatConfig": true
+}
