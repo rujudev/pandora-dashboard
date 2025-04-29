@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Aside from "./components/Aside"
 import Header from "./components/Header"
 
@@ -8,6 +8,24 @@ const App = () => {
   const handleToggleMenu = () => {
     setIsMenuOpen((prev) => !prev)
   }
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 640px)")
+
+    const handleMediaQueryChange = (event: MediaQueryListEvent) => {
+
+      console.log(event.matches);
+      setIsMenuOpen(!event.matches)
+    }
+
+    setIsMenuOpen(!mediaQuery.matches)
+
+    mediaQuery.addEventListener("change", handleMediaQueryChange)
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange)
+    }
+  }, [])
 
   return (
     <div className="flex sm:grid sm:grid-cols-[auto_1fr] transition-[grid-template-columns] duration-1000 ease-in-out h-full">

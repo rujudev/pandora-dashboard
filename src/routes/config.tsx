@@ -10,24 +10,5 @@ export const router = createBrowserRouter([
         handle: {
             crumb: (crumbData: CrumbData) => ({ label: crumbData?.label })
         },
-        children: [
-            {
-                path: 'team',
-                element: <App />,
-                loader: async () => ({ label: "Equipo" }),
-                handle: {
-                    crumb: (crumbData: CrumbData) => ({ label: crumbData?.label })
-                },
-                children: [
-                    {
-                        path: 'athletes',
-                        element: <App />,
-                        loader: async () => ({ label: "Atletas" }),
-                        handle: {
-                            crumb: (crumbData: CrumbData) => ({ label: crumbData?.label })
-                        },
-                    }]
-            }
-        ]
     },
 ]);
