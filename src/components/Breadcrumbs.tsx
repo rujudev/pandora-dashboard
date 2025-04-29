@@ -1,0 +1,37 @@
+import { UIMatch, useMatches } from "react-router";
+import { CrumbData, CrumbHandle } from "../types/breadcrumb.types";
+import Breadcrumb from "./Breadcrumb";
+
+const Breadcrumbs = () => {
+    const crumbRoutes = useMatches() as UIMatch<CrumbData, CrumbHandle>[];
+
+    const crumbs = crumbRoutes
+        .filter(route => Boolean(route.handle?.crumb))
+        .map((route, index) => {
+            const { data, handle, pathname } = route;
+            const crumbData = handle.crumb(data);
+            const crumbPath = pathname.replace(/\/$/, '');
+            const isLast = index === crumbRoutes.length - 1;
+
+            return ({
+                path: crumbPath,
+                isLast,
+                ...crumbData,
+            })
+
+        });
+
+    return (
+        <div className="flex flex-col gap-2">
+            <ol className="flex gap-2">{crumbs.map(crumb => (
+                <>
+                    <li><Breadcrumb crumb={crumb} /></li>
+                    {!crumb.isLast && <span className="font-sans text-sm leading-normal font-normal">/</span>}
+                </>
+            ))}</ol>
+            <h6 className="antialiased tracking-normal font-sans text-base font-semibold leading-relaxed">{crumbs[crumbs.length - 1].label}</h6>
+        </div>
+    )
+}
+
+export default Breadcrumbs;

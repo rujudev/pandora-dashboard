@@ -1,3 +1,4 @@
+import Breadcrumbs from "./Breadcrumbs"
 import { Bell, Menu, Search, User } from "./Icon"
 
 const Header = ({ handleToggleMenu }: {
@@ -7,7 +8,7 @@ const Header = ({ handleToggleMenu }: {
     return (
         <header className="sticky top-0 max-sm:grid max-sm:grid-cols-1 max-sm:grid-rows-2 max-sm:gap-6 sm:flex justify-between items-center z-30 py-1 w-full sm:h-14 text-primary-text">
             <div className="max-sm:row-start-2">
-                breadcrumbs
+                <Breadcrumbs />
             </div>
             <div className="max-sm:row-start-1 flex justify-between gap-4 max-sm:w-full">
                 <div className="relative flex items-center has-[input:focus]:[&>button]:text-secondary has-[input:focus]:[&>button]:hover:text-primary-text not-[has-[input:focus]]:[&>button]:hover:text-secondary">

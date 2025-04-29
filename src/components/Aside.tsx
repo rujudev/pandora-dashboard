@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { ArrowLeft, Athlete, Close, Dashboard, Training } from "./Icon";
 
 const Aside = ({ handleToggleMenu, isMenuOpen }: {
@@ -7,9 +8,9 @@ const Aside = ({ handleToggleMenu, isMenuOpen }: {
     const isOpen = isMenuOpen ? "max-sm:left-0" : "max-sm:-left-full";
 
     const navItems = [
-        { name: "Inicio", icon: <Dashboard /> },
-        { name: "Atletas", icon: <Athlete /> },
-        { name: "Entrenamientos", icon: <Training /> },
+        { name: "Inicio", link: '/', icon: <Dashboard /> },
+        { name: "Atletas", link: '/athletes', icon: <Athlete /> },
+        { name: "Entrenamientos", link: '/trains', icon: <Training /> },
     ];
 
     return (
@@ -29,10 +30,10 @@ const Aside = ({ handleToggleMenu, isMenuOpen }: {
                 <ul className="flex flex-col gap-2">
                     {navItems.map((item, index) => (
                         <li key={index} className="w-full">
-                            <a className={`relative flex items-center gap-3 rounded-md p-2 text-sm font-medium text-primary-text hover:bg-secondary hover:text-primary-bg w-full cursor-pointer`}>
+                            <Link className={`relative flex items-center gap-3 rounded-md p-2 text-sm font-medium text-primary-text hover:bg-secondary hover:text-primary-bg w-full cursor-pointer`} to={item.link}>
                                 <span>{item.icon}</span>
                                 <span className={`overflow-hidden transition-[width,display] duration-300 transition-discrete ${isMenuOpen ? 'sm:block sm:w-full' : 'sm:starting:w-full sm:w-0 sm:hidden'}`}>{item.name}</span>
-                            </a>
+                            </Link>
                         </li>
                     ))}
                 </ul>
