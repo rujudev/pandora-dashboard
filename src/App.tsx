@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { Outlet } from "react-router"
 import Aside from "./components/Aside"
 import Header from "./components/Header"
 
@@ -32,7 +33,7 @@ const App = () => {
       <Aside handleToggleMenu={handleToggleMenu} isMenuOpen={isMenuOpen} />
       <div className={`flex flex-col gap-12 p-4 h-full transition-[width] duration-1000 w-full ${isMenuOpen ? "max-sm:bg-black max-sm:opacity-50" : ""}`}>
         <Header handleToggleMenu={handleToggleMenu} />
-        <main className="h-full w-full text-primary-text">Contenido</main>
+        <main className="h-full w-full text-primary-text"><Outlet /></main>
       </div>
     </div>
   )

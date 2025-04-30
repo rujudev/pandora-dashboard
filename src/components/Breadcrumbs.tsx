@@ -3,10 +3,10 @@ import { CrumbData, CrumbHandle } from "../types/breadcrumb.types";
 import Breadcrumb from "./Breadcrumb";
 
 const Breadcrumbs = () => {
-    const crumbRoutes = useMatches() as UIMatch<CrumbData, CrumbHandle>[];
+    const matches = useMatches() as UIMatch<CrumbData, CrumbHandle>[];
+    const crumbRoutes = matches.filter(route => route.pathname !== '/' || Boolean(route.handle?.crumb));
 
     const crumbs = crumbRoutes
-        .filter(route => Boolean(route.handle?.crumb))
         .map((route, index) => {
             const { data, handle, pathname } = route;
             const crumbData = handle.crumb(data);

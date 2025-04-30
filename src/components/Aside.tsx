@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import { ArrowLeft, Athlete, Close, Dashboard, Training } from "./Icon";
+import { routes } from "../routes/config";
+import { ArrowLeft, Close } from "./Icon";
 
 const Aside = ({ handleToggleMenu, isMenuOpen }: {
     handleToggleMenu: () => void,
@@ -7,11 +8,13 @@ const Aside = ({ handleToggleMenu, isMenuOpen }: {
 }) => {
     const isOpen = isMenuOpen ? "max-sm:left-0" : "max-sm:-left-full";
 
-    const navItems = [
-        { name: "Inicio", link: '/', icon: <Dashboard /> },
-        { name: "Atletas", link: '/athletes', icon: <Athlete /> },
-        { name: "Entrenamientos", link: '/trains', icon: <Training /> },
-    ];
+    const navItems = routes.map(({ name, path, icon }) => {
+        return {
+            name: name,
+            link: path === '/' ? '/' : `/${path}`,
+            icon: icon
+        }
+    })
 
     return (
         <aside className={`max-sm:absolute ${isOpen} max-sm:w-2/3 max-sm:transition-[left] flex flex-col gap-8 h-full p-4 overflow-hidden z-40 bg-primary-bg sm:relative duration-100 transition-[padding,width] ${isMenuOpen
