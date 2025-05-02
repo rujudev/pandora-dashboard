@@ -44,8 +44,8 @@ const Aside = ({ handleToggleMenu, isMenuOpen }: {
                 </nav>
             </div>
             <div className="flex justify-end">
-                <button className="flex justify-center items-center w-10 h-10 rounded-md bg-primary text-primary-bg hover:bg-secondary duration-100 ease-linear hover:text-primary-bg cursor-pointer max-sm:hidden" onClick={handleToggleMenu}>
-                    <ArrowLeft className={`duration-100 rotate-y-${isMenuOpen ? '45' : '180'}`} />
+                <button className="flex justify-center items-center w-10 h-10 rounded-md text-primary hover:text-secondary duration-100 ease-linear cursor-pointer max-sm:hidden" onClick={handleToggleMenu}>
+                    <ArrowLeft className={`duration-100 rotate-y-${!isMenuOpen ? '180' : ''}`} />
                 </button>
             </div>
         </aside >
