@@ -1,9 +1,11 @@
+import useTheme from "../hooks/useTheme"
 import Breadcrumbs from "./Breadcrumbs"
-import { Bell, Menu, Search, User } from "./Icon"
+import { Bell, Dark, Light, Menu, Search, User } from "./Icon"
 
 const Header = ({ handleToggleMenu }: {
     handleToggleMenu: () => void
 }) => {
+    const { toggleTheme } = useTheme();
 
     return (
         <header className="sticky top-0 grid max-md:grid-cols-1 max-md:grid-rows-2 max-md:gap-6 justify-between items-center z-30 py-1 w-full text-primary-text">
@@ -24,8 +26,14 @@ const Header = ({ handleToggleMenu }: {
                     <button className="size-10 flex sm:hidden justify-center items-center rounded-md bg-primary text-primary-bg hover:bg-secondary duration-100 ease-linear hover:text-primary-bg cursor-pointer" onClick={handleToggleMenu}>
                         <Menu />
                     </button>
+                    <div className="flex gap-2">
+                        <Light />
+                        <input type="checkbox" className="toggle" onChange={() => toggleTheme()} />
+                        <Dark />
+                    </div>
                     <button className="flex justify-center size-8 items-center rounded-full bg-primary text-primary-bg hover:bg-secondary duration-100 ease-linear hover:text-primary-bg cursor-pointer"><Bell /></button>
                     <button className="flex justify-center size-8 items-center rounded-full bg-primary text-primary-bg hover:bg-secondary duration-100 ease-linear hover:text-primary-bg cursor-pointer"><User /></button>
+                    {/* <button onClick={() => toggleTheme()}>Toggle button</button> */}
                 </div>
             </div>
         </header>
