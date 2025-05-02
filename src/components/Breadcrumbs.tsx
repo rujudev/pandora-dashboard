@@ -29,7 +29,7 @@ const Breadcrumbs = () => {
                     {!crumb.isLast && <span className="font-sans text-sm leading-normal font-normal">/</span>}
                 </>
             ))}</ol>
-            <h6 className="antialiased tracking-normal font-sans text-base font-semibold leading-relaxed">{crumbs[crumbs.length - 1].label}</h6>
+            {/* <h6 className="antialiased tracking-normal font-sans text-base font-semibold leading-relaxed">{crumbs[crumbs.length - 1].label}</h6> */}
         </div>
     )
 }
