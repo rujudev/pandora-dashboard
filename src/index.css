@@ -24,10 +24,10 @@
     --color-accent-content: #1B2A34;
     --color-info: #5FD1E3;
     --color-info-content: #1B2A34;
-    --color-success: #5FD1E3;
-    --color-success-content: #1B2A34;
+    --color-success: oklch(76% 0.177 163.223);
+    --color-success-content: oklch(37% 0.077 168.94);
     --color-warning: #5FD1E3;
     --color-warning-content: #1B2A34;
-    --color-error: #5FD1E3;
-    --color-error-content: #1B2A34;
+    --color-error: oklch(71% 0.194 13.428);
+    --color-error-content: oklch(27% 0.105 12.094);
 }
