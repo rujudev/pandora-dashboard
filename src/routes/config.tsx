@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router";
 import App from "../App.tsx";
-import { Athlete, Dashboard, Training } from "../components/Icon.tsx";
+import { AthletePageIcon, DashboardPageIcon, TrainingPageIcon } from "../components/Icon.tsx";
 import Athletes from "../pages/Athletes.tsx";
 import Home from "../pages/Home.tsx";
 import Trainings from "../pages/Trainings.tsx";
@@ -10,7 +10,7 @@ export const routes = [
   {
     name: "Inicio",
     path: "/",
-    icon: <Dashboard />,
+    icon: <DashboardPageIcon />,
     element: <Home />,
     loader: async () => ({ label: "Inicio" }),
     handle: {
@@ -20,7 +20,7 @@ export const routes = [
   {
     name: "Atletas",
     path: "athletes",
-    icon: <Athlete />,
+    icon: <AthletePageIcon />,
     element: <Athletes />,
     loader: async () => ({ label: "Atletas" }),
     handle: {
@@ -30,7 +30,7 @@ export const routes = [
   {
     name: "Entrenamientos",
     path: "trainings",
-    icon: <Training />,
+    icon: <TrainingPageIcon />,
     element: <Trainings />,
     loader: async () => ({ label: "Entrenamientos" }),
     handle: {
