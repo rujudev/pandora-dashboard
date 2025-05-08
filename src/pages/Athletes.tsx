@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router";
+import { Link, Outlet } from "react-router";
 import Button from "../components/Button";
 import HeaderPage from "../components/HeaderPage";
-import { Plus } from "../components/Icon";
+import { AddTraining, EditUser, Plus, Remove } from "../components/Icon";
 import Table from "../components/Table";
 import { getAthletes } from "../services/athletes";
 
@@ -26,7 +26,21 @@ const Athletes = () => {
         { field: 'sport', headerName: 'Deporte' },
         { field: 'category', headerName: 'Categoría (Kg)' },
         { field: 'team', headerName: 'Equipo' },
-        { field: 'actions', headerName: 'Acciones' },
+        {
+            field: 'actions', headerName: 'Acciones', render: (athlete) => (
+                <div className="flex gap-5">
+                    <Link className="transition-colors duration-200 hover:text-info cursor-pointer" to={`/athletes/${athlete.id}/edit`}>
+                        <EditUser />
+                    </Link>
+                    <Link className="transition-colors duration-200 hover:text-success cursor-pointer" to={''}>
+                        <AddTraining />
+                    </Link>
+                    <Link className="transition-colors duration-200 hover:text-error cursor-pointer" to={''}>
+                        <Remove />
+                    </Link>
+                </div>
+            )
+        },
     ];
 
     const [rows, setRows] = useState([])
