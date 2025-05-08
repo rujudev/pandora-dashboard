@@ -1,25 +1,28 @@
+import { useEffect, useState } from "react";
 import { UIMatch, useMatches } from "react-router";
 import { CrumbData, CrumbHandle } from "../types/breadcrumb.types";
 import Breadcrumb from "./Breadcrumb";
 
 const Breadcrumbs = () => {
     const matches = useMatches() as UIMatch<CrumbData, CrumbHandle>[];
+    const [crumbs, setCrumbs] = useState([{ path: '', isLast: false, label: '' }])
     const crumbRoutes = matches.filter(route => route.pathname !== '/' || Boolean(route.handle?.crumb));
 
-    const crumbs = crumbRoutes
-        .map((route, index) => {
-            const { data, handle, pathname } = route;
-            const crumbData = handle.crumb(data);
-            const crumbPath = pathname.replace(/\/$/, '');
-            const isLast = index === crumbRoutes.length - 1;
+    useEffect(() => {
+        setCrumbs(crumbRoutes
+            .map((route, index) => {
+                const { data, handle, pathname } = route;
+                const crumbData = handle.crumb(data);
+                const crumbPath = pathname.replace(/\/$/, '');
+                const isLast = index === crumbRoutes.length - 1;
 
-            return ({
-                path: crumbPath,
-                isLast,
-                ...crumbData,
-            })
-
-        });
+                return ({
+                    path: crumbPath,
+                    isLast,
+                    ...crumbData,
+                })
+            }))
+    }, [matches])
 
     return (
         <div className="flex flex-col gap-2">
