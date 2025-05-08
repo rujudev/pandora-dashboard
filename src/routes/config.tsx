@@ -39,7 +39,7 @@ export const routes = [
 
           const athleteName = athlete ? `${athlete.name} ${athlete.last_name}` : '';
 
-          return { label: athleteName }
+          return { label: athleteName, ...athlete }
         },
         handle: {
           crumb: (crumbData: CrumbData) => ({ label: crumbData?.label })
