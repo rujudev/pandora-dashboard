@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { AddTraining, EditUser, Remove } from "./Icon";
 
 type ColType = 'string' | 'number' | 'date' | 'boolean' | 'actions';
 
@@ -14,7 +13,8 @@ type Column = {
     headerName?: string,
     sortable?: boolean,
     sortingOrder?: 'asc' | 'desc',
-    type?: ColType
+    type?: ColType,
+    render?: (obj: any) => React.ReactNode
 }
 
 type Props = {
@@ -23,6 +23,7 @@ type Props = {
     classes: string,
     checkboxSelection?: boolean
 }
+
 const Table: FC<Props> = ({ rows, columns, classes, checkboxSelection = false }) => {
     const mappedColumns = columns.map(column => {
         let mappedColumn = { ...column };
@@ -83,22 +84,11 @@ const Table: FC<Props> = ({ rows, columns, classes, checkboxSelection = false })
                                 {
                                     columns.map((col, colIndex) => {
                                         const isActionCol = col.field === 'actions';
+                                        const render = isActionCol && col?.render ? col.render(athlete) : null;
 
                                         return (
                                             <td key={col.field || colIndex}>
-                                                {isActionCol ? (
-                                                    <div className="flex gap-5">
-                                                        <a className="transition-colors duration-200 hover:text-info cursor-pointer" href={`/athlete/${athlete.id}`}>
-                                                            <EditUser />
-                                                        </a>
-                                                        <a className="transition-colors duration-200 hover:text-success cursor-pointer">
-                                                            <AddTraining />
-                                                        </a>
-                                                        <a className="transition-colors duration-200 hover:text-error cursor-pointer">
-                                                            <Remove />
-                                                        </a>
-                                                    </div>
-                                                ) : athlete[col.field] ?? null}
+                                                {isActionCol ? render : athlete[col.field] ?? null}
                                             </td>
                                         )
                                     })
@@ -108,7 +98,6 @@ const Table: FC<Props> = ({ rows, columns, classes, checkboxSelection = false })
                     }
                 </tbody>
             </table>
-
         </div >
     )
 }
