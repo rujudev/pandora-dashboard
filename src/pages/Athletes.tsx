@@ -5,6 +5,7 @@ import HeaderPage from "../components/HeaderPage";
 import { AddTraining, EditUser, Plus, Remove } from "../components/Icon";
 import Table from "../components/Table";
 import { getAthletes } from "../services/athletes";
+import { Athlete } from "../types/athlete.types";
 
 const Athletes = () => {
     /**
@@ -27,7 +28,7 @@ const Athletes = () => {
         { field: 'category', headerName: 'Categoría (Kg)' },
         { field: 'team', headerName: 'Equipo' },
         {
-            field: 'actions', headerName: 'Acciones', render: (athlete) => (
+            field: 'actions', headerName: 'Acciones', render: (athlete: Athlete) => (
                 <div className="flex gap-5">
                     <Link className="transition-colors duration-200 hover:text-info cursor-pointer" to={`/athletes/${athlete.id}/edit`}>
                         <EditUser />
@@ -43,14 +44,10 @@ const Athletes = () => {
         },
     ];
 
-    const [rows, setRows] = useState([])
+    const [rows, setRows] = useState<Athlete[]>([])
 
     useEffect(() => {
-        getAthletes().then(athletes => {
-            console.log(athletes);
-
-            setRows(athletes)
-        })
+        getAthletes().then(setRows)
     }, [])
 
     return (
