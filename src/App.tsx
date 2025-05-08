@@ -15,7 +15,6 @@ const App = () => {
 
     const handleMediaQueryChange = (event: MediaQueryListEvent) => {
 
-      console.log(event.matches);
       setIsMenuOpen(!event.matches)
     }
 
