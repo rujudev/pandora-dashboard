@@ -1,10 +1,9 @@
 import React from "react";
-import { Plus } from "./Icon";
 
 interface HeaderProps {
   children?: React.ReactNode;
   title?: string;
-  description?: string;
+  description?: string | React.ReactElement;
 }
 
 const HeaderPage: React.FC<HeaderProps> = ({
