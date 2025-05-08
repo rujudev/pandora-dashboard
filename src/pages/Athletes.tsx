@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
+import { Outlet } from "react-router";
 import Button from "../components/Button";
 import HeaderPage from "../components/HeaderPage";
 import { Plus } from "../components/Icon";
 import Table from "../components/Table";
+import { getAthletes } from "../services/athletes";
 
 const Athletes = () => {
     /**
@@ -17,8 +20,8 @@ const Athletes = () => {
 
     const columns = [
         { field: 'name', headerName: 'Nombre' },
-        { field: 'lastName', headerName: 'Apellidos' },
-        { field: 'birthDate', headerName: 'Fecha de nacimiento' },
+        { field: 'last_name', headerName: 'Apellidos' },
+        { field: 'birth_date', headerName: 'Fecha de nacimiento' },
         { field: 'age', headerName: 'Edad' },
         { field: 'sport', headerName: 'Deporte' },
         { field: 'category', headerName: 'Categoría (Kg)' },
@@ -26,28 +29,15 @@ const Athletes = () => {
         { field: 'actions', headerName: 'Acciones' },
     ];
 
-    const rows = [
-        {
-            id: 1,
-            name: 'Laura',
-            lastName: 'Martínez López',
-            birthDate: '2002-03-15',
-            age: 23,
-            sport: 'Judo',
-            category: '57 Kg',
-            team: 'Club Olímpico Madrid',
-        },
-        {
-            id: 2,
-            name: 'Carlos',
-            lastName: 'Pérez García',
-            team: 'Dojo Central',
-            birthDate: '1998-07-22',
-            age: 26,
-            sport: 'Taekwondo',
-            category: '68 Kg',
-        },
-    ]
+    const [rows, setRows] = useState([])
+
+    useEffect(() => {
+        getAthletes().then(athletes => {
+            console.log(athletes);
+
+            setRows(athletes)
+        })
+    }, [])
 
     return (
         <section className="flex flex-col gap-20">
@@ -66,6 +56,7 @@ const Athletes = () => {
                     columns={columns}
                     checkboxSelection={true}
                 />
+                <Outlet />
             </main>
         </section>
     );
