@@ -5,7 +5,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ children, text }) => {
   return (
-    <a className="btn btn-primary" href="/athletes/new">
+    <a className="flex btn btn-primary gap-2" href="/athletes/new">
       {children}
       {text}
     </a>
