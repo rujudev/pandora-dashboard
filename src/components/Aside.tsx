@@ -17,7 +17,7 @@ const Aside = ({ handleToggleMenu, isMenuOpen }: {
     })
 
     return (
-        <aside className={`max-sm:absolute ${isOpen} max-sm:w-2/3 max-sm:transition-[left] flex flex-col gap-8 h-full p-4 overflow-hidden z-40 bg-primary-bg sm:relative duration-100 transition-[padding,width] ${isMenuOpen
+        <aside className={`max-sm:absolute ${isOpen} max-sm:w-2/3 max-sm:transition-[left] flex flex-col gap-8 h-screen p-4 overflow-hidden z-40 bg-primary-content sm:relative duration-100 transition-[padding,width] ${isMenuOpen
             ? 'sm:w-[230px]'
             : 'sm:w-[72px]'}`}>
             <div className="flex flex-col gap-8 h-full">
@@ -44,8 +44,8 @@ const Aside = ({ handleToggleMenu, isMenuOpen }: {
                 </nav>
             </div>
             <div className="flex justify-end">
-                <button className="flex justify-center items-center w-10 h-10 rounded-md text-primary hover:text-secondary duration-100 ease-linear cursor-pointer max-sm:hidden" onClick={handleToggleMenu}>
-                    <ArrowLeft className={`duration-100 rotate-y-${!isMenuOpen ? '180' : ''}`} />
+                <button className={`flex justify-center items-center w-10 h-10 rounded-md text-primary hover:text-secondary duration-100 ease-linear cursor-pointer max-sm:hidden duration-100 rotate-y-${!isMenuOpen ? '180' : ''}`} onClick={handleToggleMenu}>
+                    <ArrowLeft />
                 </button>
             </div>
         </aside >
