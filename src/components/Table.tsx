@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
 type ColType = 'string' | 'number' | 'date' | 'boolean' | 'actions';
 
@@ -7,14 +7,14 @@ type Row = {
     [key: string]: any
 }
 
-type Column = {
+export type Column = {
     field: string,
     width?: string | number,
     headerName?: string,
     sortable?: boolean,
     sortingOrder?: 'asc' | 'desc',
     type?: ColType,
-    render?: (obj: any) => React.ReactNode
+    render?: (obj: any) => ReactNode
 }
 
 type Props = {
