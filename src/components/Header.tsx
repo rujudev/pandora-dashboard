@@ -1,5 +1,5 @@
 import useTheme from "../hooks/useTheme"
-import Breadcrumbs from "./Breadcrumbs"
+import Breadcrumbs from "./breadcrumb/Breadcrumbs"
 import { Bell, Dark, Light, Menu, Search, User } from "./Icon"
 
 const Header = ({ handleToggleMenu }: {
@@ -8,7 +8,7 @@ const Header = ({ handleToggleMenu }: {
     const { toggleTheme } = useTheme();
 
     return (
-        <header className="sticky top-0 grid max-md:grid-cols-1 max-md:grid-rows-2 max-md:gap-6 justify-between items-center z-30 py-1 w-full text-primary-text">
+        <header className="sticky top-0 bg-primary-content grid max-md:grid-cols-1 max-md:grid-rows-2 max-md:gap-6 justify-between items-center z-30 w-full text-primary-text z-9">
             <div className="max-md:row-start-2 md:row-start-1">
                 <Breadcrumbs />
             </div>
