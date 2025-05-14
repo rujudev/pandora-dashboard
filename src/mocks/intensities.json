@@ -1,0 +1,100 @@
+[
+    {
+        "value": 30,
+        "weight": 0,
+        "intensity_zone": null,
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 50,
+        "weight": 0,
+        "intensity_zone": null,
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 50,
+        "weight": 0,
+        "intensity_zone": "Z1",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 59,
+        "weight": 0,
+        "intensity_zone": "Z1",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 65,
+        "weight": 0,
+        "intensity_zone": "Z2",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 69,
+        "weight": 0,
+        "intensity_zone": "Z2",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 70,
+        "weight": 0,
+        "intensity_zone": "Z3",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 75,
+        "weight": 0,
+        "intensity_zone": "Z3",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 80,
+        "weight": 0,
+        "intensity_zone": "Z4",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 89,
+        "weight": 0,
+        "intensity_zone": "Z4",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 90,
+        "weight": 0,
+        "intensity_zone": "Z5",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 100,
+        "weight": 0,
+        "intensity_zone": "Z5",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 110,
+        "weight": 0,
+        "intensity_zone": "Z6",
+        "series": 2,
+        "repetitions": 4
+    },
+    {
+        "value": 120,
+        "weight": 0,
+        "intensity_zone": "Z6",
+        "series": 2,
+        "repetitions": 4
+    }
+]
