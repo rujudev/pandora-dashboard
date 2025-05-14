@@ -28,11 +28,11 @@ const App = () => {
   }, [])
 
   return (
-    <div className="flex sm:grid sm:grid-cols-[auto_1fr] transition-[grid-template-columns] duration-1000 ease-in-out h-full">
+    <div className="flex sm:grid sm:grid-cols-[auto_1fr] transition-[grid-template-columns] duration-1000 ease-in-out h-full overflow-hidden">
       <Aside handleToggleMenu={handleToggleMenu} isMenuOpen={isMenuOpen} />
-      <div className={`flex flex-col gap-12 p-4 h-full transition-[width] duration-1000 w-full ${isMenuOpen ? "max-sm:bg-black max-sm:opacity-50" : ""}`}>
+      <div className={`flex flex-col gap-12 p-4 h-screen transition-[width] duration-1000 w-full ${isMenuOpen ? "max-sm:bg-black max-sm:opacity-50" : ""}`}>
         <Header handleToggleMenu={handleToggleMenu} />
-        <main className="h-full w-full text-primary-text"><Outlet /></main>
+        <main className="h-full w-full text-primary-text overflow-auto"><Outlet /></main>
       </div>
     </div>
   )
