@@ -1,4 +1,6 @@
-import { Athlete, Training } from "./athlete.types";
+import { Athlete } from "../interfaces/athlete.interface";
+import { Training } from "../interfaces/training.interface";
+
 
 export type CrumbData = {
     label: string;
