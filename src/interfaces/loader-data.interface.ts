@@ -1,5 +1,5 @@
-import { Athlete } from "./athlete.types"
-import { Training } from "./training.types"
+import { Athlete } from "./athlete.interface"
+import { Training } from "./training.interface"
 
 export type LoaderData = {
     label?: string
