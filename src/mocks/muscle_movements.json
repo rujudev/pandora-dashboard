@@ -1,0 +1,10 @@
+[
+  {
+    "id_movement": 1,
+    "movement_name": "Empuje"
+  },
+  {
+    "id_movement": 2,
+    "movement_name": "Tracción"
+  }
+]

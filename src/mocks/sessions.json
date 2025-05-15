@@ -1,0 +1,14 @@
+[
+  {
+    "id_session": 1,
+    "id_training": 1,
+    "day_week": "Lunes",
+    "day_period": "Mañana"
+  },
+  {
+    "id_session": 2,
+    "id_training": 1,
+    "day_week": "Miércoles",
+    "day_period": "Tarde"
+  }
+]

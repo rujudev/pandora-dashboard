@@ -1,0 +1,12 @@
+[
+  {
+    "id_intensity": 1,
+    "percentage_min": 60.0,
+    "percentage_max": 75.0
+  },
+  {
+    "id_intensity": 2,
+    "percentage_min": 80.0,
+    "percentage_max": 90.0
+  }
+]

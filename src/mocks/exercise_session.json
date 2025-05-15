@@ -1,0 +1,14 @@
+[
+  {
+    "id_session": 1,
+    "id_exercise": 1
+  },
+  {
+    "id_session": 1,
+    "id_exercise": 2
+  },
+  {
+    "id_session": 2,
+    "id_exercise": 1
+  }
+]

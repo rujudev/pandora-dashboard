@@ -1,37 +1,22 @@
 [
-    {
-        "id": "1",
-        "name": "Laura",
-        "last_name": "Martínez López",
-        "birth_date": "2002-05-14",
-        "age": 23,
-        "sport": "Atletismo",
-        "category": "64 kg",
-        "team": "Club Deportivo Valencia",
-        "trainings": [
-            "1"
-        ]
-    },
-    {
-        "id": "2",
-        "name": "Carlos",
-        "last_name": "García Torres",
-        "birth_date": "1998-11-03",
-        "age": 26,
-        "sport": "Baloncesto",
-        "category": "82 kg",
-        "team": "Basket Madrid Norte",
-        "trainings": []
-    },
-    {
-        "id": "3",
-        "name": "Ana",
-        "last_name": "Ruiz Fernández",
-        "birth_date": "2006-09-20",
-        "age": 18,
-        "sport": "Natación",
-        "category": "58 kg",
-        "team": "Club Natación Sevilla",
-        "trainings": []
-    }
+  {
+    "id_athlete": 1,
+    "first_name": "Carlos",
+    "last_name": "Pérez",
+    "category_weight": 75.5,
+    "birth_day": "1994-01-08",
+    "sport": "Crossfit",
+    "team": "Box Norte",
+    "thumbnail": "carlos.jpg"
+  },
+  {
+    "id_athlete": 2,
+    "first_name": "Lucía",
+    "last_name": "Martínez",
+    "category_weight": 60.2,
+    "birth_day": "2004-02-02",
+    "sport": "Halterofilia",
+    "team": "Club Sur",
+    "thumbnail": "lucia.jpg"
+  }
 ]

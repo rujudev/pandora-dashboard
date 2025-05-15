@@ -1,0 +1,16 @@
+[
+  {
+    "id_exercise": 1,
+    "exercise_name": "Press Banca",
+    "remarks": "Ejercicio de pecho",
+    "abreviation": "PB",
+    "id_movement": 1
+  },
+  {
+    "id_exercise": 2,
+    "exercise_name": "Dominadas",
+    "remarks": "Ejercicio de espalda",
+    "abreviation": "DOM",
+    "id_movement": 2
+  }
+]

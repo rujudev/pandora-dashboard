@@ -1,0 +1,12 @@
+[
+  {
+    "id_training": 1,
+    "id_movement": 1,
+    "weight_ref": 90.0
+  },
+  {
+    "id_training": 1,
+    "id_movement": 2,
+    "weight_ref": 85.0
+  }
+]

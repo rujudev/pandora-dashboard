@@ -1,0 +1,14 @@
+[
+  {
+    "id_intensity": 1,
+    "id_exercise": 1,
+    "series": 3,
+    "repetitions": 10
+  },
+  {
+    "id_intensity": 2,
+    "id_exercise": 2,
+    "series": 4,
+    "repetitions": 6
+  }
+]
