@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 
+const THEME = {
+    LIGHT: 'winter',
+    DARK: 'dim',
+}
+
 const useTheme = () => {
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState(THEME.LIGHT);
 
     const toggleTheme = () => {
-        const newTheme = theme === "dark" ? "light" : "dark";
+        const newTheme = theme === THEME.DARK ? THEME.LIGHT : THEME.DARK;
 
         setTheme(newTheme);
 
@@ -13,7 +18,7 @@ const useTheme = () => {
     };
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem("theme") || "light";
+        const savedTheme = localStorage.getItem("theme") || THEME.LIGHT;
 
         setTheme(savedTheme);
 
