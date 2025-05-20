@@ -1,11 +1,13 @@
 import { ReactElement, useEffect, useState } from "react";
-import { Link, Outlet, useLocation } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import Button from "../components/Button";
 import HeaderPage from "../components/HeaderPage";
-import { EditUser, Plus, Remove, ViewTraining } from "../components/Icon";
-import Table, { Column } from "../components/Table";
+import { Plus } from "../components/Icon";
+import AthleteActions from "../components/table/AthleteActions";
+import Table, { Column } from "../components/table/Table";
+import { Athlete } from "../interfaces/athlete.interface";
 import { getAthletes } from "../services/athletes";
-import { Athlete } from "../types/athlete.types";
+import { calculateAge } from "../utils/date";
 
 export type HeaderConfig = {
     hasBackButton: boolean,
@@ -26,31 +28,30 @@ const Athletes = () => {
     const isAthletesPage = pathname === '/athletes';
 
     const columns: Column[] = [
-        { field: 'name', headerName: 'Nombre' },
+        {
+            field: 'selection', render: () => (
+                <label>
+                    <input type="checkbox" className="checkbox" />
+                </label>
+            )
+        },
+        { field: 'first_name', headerName: 'Nombre' },
         { field: 'last_name', headerName: 'Apellidos' },
-        { field: 'birth_date', headerName: 'Fecha de nacimiento' },
-        { field: 'age', headerName: 'Edad' },
+        {
+            field: 'birth_day', headerName: 'Fecha de nacimiento', render: (athlete: Athlete) => (
+                <span>{athlete.birth_day?.toLocaleDateString()}</span>
+            )
+        },
+        {
+            field: 'age', headerName: 'Edad', render: (athlete: Athlete) => (
+                <span>{calculateAge(athlete.birth_day)}</span>
+            )
+        },
         { field: 'sport', headerName: 'Deporte' },
-        { field: 'category', headerName: 'Categoría (Kg)' },
+        { field: 'category_weight', headerName: 'Categoría (Kg)' },
         { field: 'team', headerName: 'Equipo' },
         {
-            field: 'actions', headerName: 'Acciones', render: (athlete: Athlete) => (
-                <div className="flex justify-between gap-5">
-                    <Link className="transition-colors duration-200 hover:text-info cursor-pointer" to={`/athletes/${athlete.id}/edit`}>
-                        <EditUser />
-                    </Link>
-                    {athlete.trainings.length > 0 && (
-                        <Link
-                            className="transition-colors duration-200 hover:text-success cursor-pointer"
-                            to={`/athletes/${athlete.id}/trainings`}>
-                            <ViewTraining />
-                        </Link>
-                    )}
-                    <Link className="transition-colors duration-200 hover:text-error cursor-pointer" to={''}>
-                        <Remove />
-                    </Link>
-                </div>
-            )
+            field: 'actions', headerName: 'Acciones', render: (athlete: Athlete) => <AthleteActions athlete={athlete} />
         },
     ];
 
@@ -90,7 +91,6 @@ const Athletes = () => {
                             classes="max-h-95 overflow-y-auto rounded-box border border-base-content/5 bg-base-100"
                             rows={rows}
                             columns={columns}
-                            checkboxSelection={true}
                         />
                     ) : <Outlet context={{ setHeaderConfig }} />
                 }
