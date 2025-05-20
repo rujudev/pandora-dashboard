@@ -17,7 +17,7 @@ const MuscleMovements = ({ muscleMovements, onChangeWeightRef, onDeleteMuscleMov
     }
 
     return (
-        <div className="col-span-2 flex flex-col justify-items-end gap-5 text-sm border border-neutral rounded-xl p-4 w-full">
+        <>
             <div className="flex justify-between">
                 <div className="flex items-center gap-5">
                     <Movement />
@@ -39,7 +39,7 @@ const MuscleMovements = ({ muscleMovements, onChangeWeightRef, onDeleteMuscleMov
                         />)}
                 </List>
             )}
-        </div>
+        </>
     )
 }
 
