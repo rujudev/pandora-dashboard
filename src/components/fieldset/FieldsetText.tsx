@@ -9,10 +9,11 @@ type Props = {
     full?: boolean,
     readOnly?: boolean,
     classes?: string,
+    inputClasses?: string,
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
-export const FieldsetText: FC<Props> = ({ id = '', legend = '', placeholder = '', value = '', label = '', classes = '', full = true, readOnly = false, onChange }) => {
+export const FieldsetText: FC<Props> = ({ id = '', legend = '', placeholder = '', value = '', label = '', classes = '', inputClasses = '', full = true, readOnly = false, onChange }) => {
     return (
         <fieldset className={`fieldset${classes ? ` ${classes}` : ''}`}>
             {legend && (
@@ -21,7 +22,7 @@ export const FieldsetText: FC<Props> = ({ id = '', legend = '', placeholder = ''
             <input
                 id={id}
                 type="text"
-                className={`input${full ? ' w-full' : ''}${readOnly ? ' opacity-[0.5] cursor-default focus:outline-none focus:ring-0 pointer-events-none' : ''}`}
+                className={`input${full ? ' w-full' : ''}${inputClasses ? ` ${inputClasses}` : ''}${readOnly ? ' opacity-[0.5] cursor-default focus:outline-none focus:ring-0 pointer-events-none' : ''}`}
                 placeholder={placeholder}
                 value={value}
                 readOnly={readOnly}

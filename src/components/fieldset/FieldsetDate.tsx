@@ -1,24 +1,24 @@
 import { autoUpdate, flip, offset, useFloating } from "@floating-ui/react-dom";
 import { FC, useEffect, useState } from "react";
-import { DateRange, DayPicker, DayPickerProps, Mode } from 'react-day-picker';
+import { DayPicker, DayPickerProps, PropsMulti, PropsRange, PropsSingle } from 'react-day-picker';
 import { Calendar } from "../Icon";
 
 import 'react-day-picker/dist/style.css';
 
-type Props = DayPickerProps & {
+type CustomProps = {
     legend?: string;
     value?: string;
     label?: string;
     placeholder?: string;
-    mode?: Mode;
     full?: boolean;
     anchor?: string;
     id?: string;
-    selected?: Date | Date[] | DateRange | undefined;
 }
 
+type Props = (PropsSingle | PropsRange | PropsMulti) & DayPickerProps & CustomProps;
+
 export const FieldsetDate: FC<Props> = (props) => {
-    const { id = '', legend = '', label = '', placeholder = '', full = true, mode = "single", selected } = props;
+    const { id = '', legend = '', label = '', placeholder = '', full = true, selected } = props;
     const [open, setOpen] = useState(false);
     const { refs: { reference, setReference, setFloating }, floatingStyles } = useFloating({
         placement: 'bottom-start',
@@ -63,24 +63,23 @@ export const FieldsetDate: FC<Props> = (props) => {
                         type="button"
                         onClick={() => setOpen(!open)}
                     >
-                        <span className={`text-base-content${!selectedDate ? ' opacity-[0.5]' : ''}`}>{selectedDate ? selectedDate.toLocaleDateString() : placeholder}</span>
+                        <span className={`text-base-content${!selectedDate ? ' opacity-[0.5]' : ''}`}>{selectedDate ? new Date(selectedDate).toLocaleDateString() : placeholder}</span>
                         <Calendar classes="opacity-[0.5]" />
                     </button>
                     {open && (
                         <div ref={setFloating} className="bg-primary-content border rounded-xl shadow-xl p-2 z-10" style={{ ...floatingStyles }}>
                             <DayPicker
-                                mode={mode}
                                 selected={selectedDate}
                                 required={false}
                                 disabled={{ before: new Date() }}
-                                onSelect={setSelectedDate}
+                                {...props}
                             />
                         </div>
                     )}
                 </div>
                 {
                     label && (
-                        <p className="label">You can edit page title later on from settings</p>
+                        <p className="label">{label}</p>
                     )
                 }
 
