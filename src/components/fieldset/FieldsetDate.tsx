@@ -1,9 +1,11 @@
 import { autoUpdate, flip, offset, useFloating } from "@floating-ui/react-dom";
 import { FC, useEffect, useState } from "react";
-import { DayPicker, DayPickerProps, PropsMulti, PropsRange, PropsSingle } from 'react-day-picker';
+import { DayPicker, DayPickerProps, getDefaultClassNames, PropsMulti, PropsRange, PropsSingle } from 'react-day-picker';
 import { Calendar } from "../Icon";
 
 import 'react-day-picker/dist/style.css';
+import Card from "../card/Card";
+import CardBody from "../card/CardBody";
 
 type CustomProps = {
     legend?: string;
@@ -18,6 +20,7 @@ type CustomProps = {
 type Props = (PropsSingle | PropsRange | PropsMulti) & DayPickerProps & CustomProps;
 
 export const FieldsetDate: FC<Props> = (props) => {
+    const defaultClassNames = getDefaultClassNames();
     const { id = '', legend = '', label = '', placeholder = '', full = true, selected } = props;
     const [open, setOpen] = useState(false);
     const { refs: { reference, setReference, setFloating }, floatingStyles } = useFloating({
@@ -67,14 +70,24 @@ export const FieldsetDate: FC<Props> = (props) => {
                         <Calendar classes="opacity-[0.5]" />
                     </button>
                     {open && (
-                        <div ref={setFloating} className="bg-primary-content border rounded-xl shadow-xl p-2 z-10" style={{ ...floatingStyles }}>
-                            <DayPicker
-                                selected={selectedDate}
-                                required={false}
-                                disabled={{ before: new Date() }}
-                                {...props}
-                            />
-                        </div>
+                        <Card ref={setFloating} classes="z-10" style={{ ...floatingStyles }}>
+                            <CardBody>
+                                <DayPicker
+                                    {...props}
+                                    selected={selectedDate}
+                                    required={false}
+                                    disabled={{ before: new Date() }}
+                                    classNames={{
+                                        today: 'text-info',
+                                        selected: `${defaultClassNames.selected} text-primary-content`,
+                                        day_button: `${defaultClassNames.day_button} hover:text-secondary duration-100 ease-linear`,
+                                        chevron: `fill-primary hover:fill-secondary duration-100 ease-linear cursor-pointer`
+                                    }}
+                                    captionLayout="dropdown"
+                                    showOutsideDays
+                                />
+                            </CardBody>
+                        </Card>
                     )}
                 </div>
                 {
