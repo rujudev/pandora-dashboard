@@ -8,7 +8,7 @@ import Athletes from "../pages/Athletes.tsx";
 import Home from "../pages/Home.tsx";
 import Trainings from "../pages/Trainings.tsx";
 import { getAthlete } from "../services/athletes.ts";
-import { getTraining } from "../services/trainings.ts";
+import { getTrainingByAthlete } from "../services/trainings.ts";
 import { CrumbData } from "../types/breadcrumb.types.ts";
 
 export const routes = [
@@ -35,9 +35,11 @@ export const routes = [
       {
         path: ":athleteId",
         loader: async ({ params }) => {
-          const athlete = await getAthlete(params.athleteId);
-          const name = athlete ? `${athlete.name} ${athlete.last_name}` : '';
+          const id = params.athleteId ? Number(params.athleteId) : 0;
+          const athlete = await getAthlete(id);
+          const name = athlete ? `${athlete.first_name} ${athlete.last_name}` : '';
 
+          console.log(name, athlete);
           return {
             label: name,
             isLast: false
@@ -52,9 +54,10 @@ export const routes = [
             name: "Atleta",
             element: <AthleteComponent />,
             loader: async ({ params }) => {
-              const athlete = await getAthlete(params.athleteId);
+              const id = params.athleteId ? Number(params.athleteId) : 0;
+              const athlete = await getAthlete(id);
 
-              const athleteName = athlete ? `${athlete.name} ${athlete.last_name}` : '';
+              const athleteName = athlete ? `${athlete.first_name} ${athlete.last_name}` : '';
 
               return { label: athleteName, isLast: true, athlete }
             },
@@ -67,24 +70,33 @@ export const routes = [
             name: "Atleta",
             element: <AthleteTrainingsHistory />,
             loader: async ({ params }) => {
-              const athlete = await getAthlete(params.athleteId);
+              const id = params.athleteId ? Number(params.athleteId) : 0;
+              const athlete = await getAthlete(id);
 
-              const athleteName = athlete ? `${athlete.name} ${athlete.last_name}` : '';
+              const athleteName = athlete ? `${athlete.first_name} ${athlete.last_name}` : '';
 
               return { label: athleteName, isLast: true, athlete }
             },
             handle: {
-              crumb: (crumbData: CrumbData) => ({ label: 'Historial de entrenamientos', path: `/athletes/${crumbData?.athlete?.id}/trainings`, isLast: false })
+              crumb: (crumbData: CrumbData) => ({ label: 'Historial de entrenamientos', path: `/athletes/${crumbData?.athlete?.id_athlete}/trainings`, isLast: false })
             },
             children: [
               {
                 path: ':trainingId/edit',
                 element: <AthleteTraining />,
                 loader: async ({ params }) => {
-                  const athlete = await getAthlete(params.athleteId);
-                  const training = await getTraining(athlete?.trainings.find(athleteTraining => athleteTraining === params.trainingId) ?? '');
+                  const athleteId = params.athleteId ? Number(params.athleteId) : 0;
+                  const trainingId = params.trainingId ? Number(params.trainingId) : 0;
 
-                  return { label: training?.name, isLast: true, athlete, training }
+                  const athlete = await getAthlete(athleteId);
+                  const { data: dataTraining, error: errorTraining } = await getTrainingByAthlete(athleteId, trainingId);
+                  const training = dataTraining?.[0];
+
+                  const formatter = new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short', year: '2-digit' });
+                  const formatterStartDate = formatter.format(new Date(training.start_date));
+                  const formatterEndDate = formatter.format(new Date(training.end_date));
+
+                  return { label: `${formatterStartDate} - ${formatterEndDate}`, isLast: true, athlete, training }
                 },
                 handle: {
                   crumb: (crumbData: CrumbData) => ({ label: crumbData.label })
