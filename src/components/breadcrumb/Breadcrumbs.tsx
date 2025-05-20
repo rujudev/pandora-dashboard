@@ -25,11 +25,11 @@ const Breadcrumbs = () => {
 
     return (
         <div className="flex flex-col gap-2">
-            <ol className="flex gap-2">{crumbs.map((crumb: CrumbData) => (
-                <>
-                    <li><Breadcrumb crumb={crumb} /></li>
+            <ol className="flex gap-2">{crumbs.map((crumb: CrumbData, index) => (
+                <li key={index} className="flex gap-2">
+                    <Breadcrumb crumb={crumb} />
                     {!crumb.isLast && <span className="font-sans text-sm leading-normal font-normal">/</span>}
-                </>
+                </li>
             ))}</ol>
         </div>
     )
