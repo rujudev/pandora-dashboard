@@ -1,13 +1,14 @@
 import { DateRange } from "react-day-picker"
 import { FieldsetDate } from "../fieldset"
 
-const StartEndDate = ({ startDate, endDate, onChange }: {
+const StartEndDate = ({ startDate, endDate, classes, onChange }: {
     startDate: string,
     endDate: string,
     onChange: (dateKey: "start_date" | "end_date", value: string) => void
+    classes?: string,
 }) => {
     return (
-        <>
+        <div {...classes ? { className: classes } : null}>
             <FieldsetDate
                 mode="single"
                 legend="Fecha inicio"
@@ -28,7 +29,7 @@ const StartEndDate = ({ startDate, endDate, onChange }: {
                 }}
                 showWeekNumber
             />
-        </>
+        </div>
     )
 }
 
