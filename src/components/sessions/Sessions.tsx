@@ -30,7 +30,7 @@ const Sessions = ({
     }
 
     return (
-        <div className="col-span-2 flex flex-col justify-items-end gap-5 text-sm border border-neutral rounded-xl p-4 w-full">
+        <>
             <div className="flex justify-between">
                 <div className="flex gap-5 items-center">
                     <CalendarWeek />
@@ -56,7 +56,7 @@ const Sessions = ({
                     />
                 )
             }
-        </div>
+        </>
     )
 }
 

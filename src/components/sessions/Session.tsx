@@ -9,29 +9,29 @@ import OpenModalButton from "../modal/OpenModalButton";
 
 const ZONE_COLOR: Record<string, { text: string; bg: string; contrastText: string }> = {
     Z1: {
-        text: 'text-[#00BFFF]',     // Azul claro (texto original)
-        bg: 'bg-[#00BFFF]',         // Azul claro (fondo)
-        contrastText: 'text-white',  // Texto blanco para contraste
+        text: 'text-info',
+        bg: 'bg-info',
+        contrastText: 'text-base-content',
     },
     Z2: {
-        text: 'text-[#00FF7F]',     // Verde (texto original)
-        bg: 'bg-[#00FF7F]',         // Verde (fondo)
-        contrastText: 'text-black',  // Texto negro para contraste (verde claro)
+        text: 'text-success',
+        bg: 'bg-success',
+        contrastText: 'text-base-content',
     },
     Z3: {
-        text: 'text-[#DDDDDD]',     // Gris claro (texto original)
-        bg: 'bg-[#DDDDDD]',         // Gris claro (fondo)
-        contrastText: 'text-black',  // Texto negro para contraste
+        text: 'text-[#DDDDDD]',
+        bg: 'bg-[#DDDDDD]',
+        contrastText: 'text-black',
     },
     Z4: {
-        text: 'text-[#FFFF00]',     // Amarillo (texto original)
-        bg: 'bg-[#FFFF00]',         // Amarillo (fondo)
-        contrastText: 'text-black',  // Texto negro para contraste
+        text: 'text-warning',
+        bg: 'bg-warning',
+        contrastText: 'text-base-content',
     },
     Z5: {
-        text: 'text-[#FF0000]',     // Rojo (texto original)
-        bg: 'bg-[#FF0000]',         // Rojo (fondo)
-        contrastText: 'text-white',  // Texto blanco para contraste
+        text: 'text-error',
+        bg: 'bg-error',
+        contrastText: 'text-base-content',
     }
 };
 
