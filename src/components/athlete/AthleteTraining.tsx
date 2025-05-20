@@ -3,6 +3,8 @@ import { useLoaderData, useLocation, useMatch, useOutletContext } from "react-ro
 import { AthleteOutletContext } from "../../interfaces/athlete-route-outlet.interface";
 import { FullTrainingPlan } from "../../interfaces/interfaces_compuestas.interface";
 import { LoaderData } from "../../interfaces/loader-data.interface";
+import Card from "../card/Card";
+import CardBody from "../card/CardBody";
 import MuscleMovements from "../muscleMovements/MuscleMovements";
 import Sessions from "../sessions/Sessions";
 import StartEndDate from "../training/StartEndDate";
@@ -133,23 +135,36 @@ const AthleteTraining = () => {
 
     return (
         <div className="grid grid-cols-2 w-full gap-5">
-            <StartEndDate
-                startDate={athleteTraining.start_date}
-                endDate={athleteTraining.end_date}
-                onChange={onHandleChangeDate}
-            />
-            <MuscleMovements
-                muscleMovements={athleteTraining.muscle_movements}
-                onChangeWeightRef={onHandleChangeMovementWeightRef}
-                onDeleteMuscleMovement={onHandleDeleteMovement}
-            />
-            <Sessions
-                sessions={athleteTraining.sessions}
-                muscleMovements={athleteTraining.muscle_movements}
-                onChangeDayWeek={onHandleChangeDayWeek}
-                onChangeDayPeriod={onHandleChangeSessionDayPeriod}
-                onChangeExerciseMuscleMovement={onHandleChangeSessionMuscleMovement}
-            />
+            <Card>
+                <CardBody>
+                    <StartEndDate
+                        classes="gap-5 grid grid-cols-2"
+                        startDate={athleteTraining.start_date}
+                        endDate={athleteTraining.end_date}
+                        onChange={onHandleChangeDate}
+                    />
+                </CardBody>
+            </Card>
+            <Card>
+                <CardBody>
+                    <MuscleMovements
+                        muscleMovements={athleteTraining.muscle_movements}
+                        onChangeWeightRef={onHandleChangeMovementWeightRef}
+                        onDeleteMuscleMovement={onHandleDeleteMovement}
+                    />
+                </CardBody>
+            </Card>
+            <Card>
+                <CardBody>
+                    <Sessions
+                        sessions={athleteTraining.sessions}
+                        muscleMovements={athleteTraining.muscle_movements}
+                        onChangeDayWeek={onHandleChangeDayWeek}
+                        onChangeDayPeriod={onHandleChangeSessionDayPeriod}
+                        onChangeExerciseMuscleMovement={onHandleChangeSessionMuscleMovement}
+                    />
+                </CardBody>
+            </Card>
         </div>
     )
 }
