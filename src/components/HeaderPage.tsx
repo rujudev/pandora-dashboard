@@ -19,7 +19,7 @@ const HeaderPage: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="sticky top-0 bg-primary-content z-10 flex max-sm:flex-col max-sm:gap-10 max-sm:items-start justify-between items-center py-4">
+      <header className="sticky top-0 z-10 flex max-sm:flex-col max-sm:gap-10 max-sm:items-start justify-between items-center bg-base-200 py-4">
         <div className="flex gap-10">
           {hasBackButton && (
             <button className="flex justify-center items-center rounded-md text-primary hover:text-secondary duration-100 ease-linear cursor-pointer" onClick={() => navigate(-1)} ><ArrowLeft /></button>
