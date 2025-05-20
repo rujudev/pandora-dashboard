@@ -1,11 +1,11 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "./Icon";
 
 interface HeaderProps {
-  children?: React.ReactNode;
-  title?: string;
-  description?: string | React.ReactElement;
+  children?: ReactElement;
+  title?: string | ReactElement;
+  description?: string | ReactElement;
   hasBackButton?: boolean;
 }
 
