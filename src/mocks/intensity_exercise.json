@@ -7,6 +7,12 @@
   },
   {
     "id_intensity": 2,
+    "id_exercise": 1,
+    "series": 10,
+    "repetitions": 30
+  },
+  {
+    "id_intensity": 2,
     "id_exercise": 2,
     "series": 4,
     "repetitions": 6
