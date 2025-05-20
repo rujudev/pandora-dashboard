@@ -1,8 +1,9 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { useLoaderData, useLocation, useOutletContext } from "react-router";
-import { AthleteOutletContext } from "../../types/athlete-route-outlet.types";
-import { Athlete } from "../../types/athlete.types";
-import { LoaderData } from "../../types/loader-data.types";
+import { AthleteOutletContext } from "../../interfaces/athlete-route-outlet.interface";
+import { LoaderData } from "../../interfaces/loader-data.interface";
+
+import { Athlete } from "../../interfaces/athlete.interface";
 import { calculateAge } from "../../utils/date";
 import { FieldsetDate, FieldsetText } from "../fieldset";
 import { Save } from "../Icon";
@@ -65,10 +66,10 @@ const AthleteComponent = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 border-[1px] border-neutral rounded-xl w-full gap-5 p-5">
                     <FieldsetText id="name" legend="Nombre" placeholder="Nombre" value={selectedAthlete?.name} onChange={onHandleChange} />
                     <FieldsetText id="last_name" legend="Apellidos" placeholder="Apellidos" value={selectedAthlete?.last_name} onChange={onHandleChange} />
-                    <FieldsetDate id="birth_date" legend="Fecha de nacimiento" placeholder="Selecciona una fecha" selected={new Date(selectedAthlete?.birth_date || '')} />
-                    <FieldsetText id="age" legend="Edad" placeholder="Edad" value={calculateAge(selectedAthlete?.birth_date)} label="Calculada automáticamente" onChange={onHandleChange} readOnly />
+                    <FieldsetDate mode="single" id="birth_date" legend="Fecha de nacimiento" placeholder="Selecciona una fecha" selected={new Date(selectedAthlete?.birth_day || '')} />
+                    <FieldsetText id="age" legend="Edad" placeholder="Edad" value={calculateAge(selectedAthlete?.birth_day)} label="Calculada automáticamente" onChange={onHandleChange} readOnly />
                     <FieldsetText id="sport" legend="Deporte" placeholder="Deporte" value={selectedAthlete?.sport} onChange={onHandleChange} readOnly />
-                    <FieldsetText id="category" legend="Categoría" placeholder="Categoría" value={selectedAthlete?.category} onChange={onHandleChange} readOnly />
+                    <FieldsetText id="category" legend="Categoría" placeholder="Categoría" value={selectedAthlete?.category_weight} onChange={onHandleChange} readOnly />
                     <FieldsetText id="team" legend="Equipo" placeholder="Equipo" value={selectedAthlete?.team} onChange={onHandleChange} readOnly />
                 </div>
             </div>
