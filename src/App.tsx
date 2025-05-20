@@ -34,7 +34,7 @@ const App = () => {
         <Aside handleToggleMenu={handleToggleMenu} isMenuOpen={isMenuOpen} />
         <div className={`flex flex-col gap-12 p-4 h-screen transition-[width] duration-1000 w-full ${isMenuOpen ? "max-sm:bg-black max-sm:opacity-50" : ""}`}>
           <Header handleToggleMenu={handleToggleMenu} />
-          <main className="h-full w-full text-primary-text overflow-auto text-base-content"><Outlet /></main>
+          <main className="h-full w-full text-primary-text overflow-auto"><Outlet /></main>
         </div>
       </div>
       <Dialog />
