@@ -1,11 +1,10 @@
-export const calculateAge = (date: string | undefined): string => {
+export const calculateAge = (date: Date | null): string => {
     if (!date) return '0';
 
-    const birthDate = new Date(date);
     const today = new Date();
-    const birthYear = birthDate.getFullYear();
-    const birthMonth = birthDate.getMonth();
-    const birthDay = birthDate.getDate();
+    const birthYear = date.getFullYear();
+    const birthMonth = date.getMonth();
+    const birthDay = date.getDate();
 
     let age = today.getFullYear() - birthYear;
 
@@ -19,3 +18,8 @@ export const calculateAge = (date: string | undefined): string => {
 
     return age.toString();
 };
+
+export const getFormattedDate = (date: Date, locale: Intl.LocalesArgument, options: Intl.DateTimeFormatOptions) => {
+    const formatter = new Intl.DateTimeFormat(locale, options);
+    return formatter.format(date);
+} 
