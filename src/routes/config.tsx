@@ -15,7 +15,7 @@ export const routes = [
   {
     name: "Inicio",
     path: "/",
-    icon: <DashboardPageIcon />,
+    icon: <DashboardPageIcon classes="opacity-30" />,
     element: <Home />,
     loader: async () => ({ label: "Inicio" }),
     handle: {
@@ -25,7 +25,7 @@ export const routes = [
   {
     name: "Atletas",
     path: "athletes",
-    icon: <AthletePageIcon />,
+    icon: <AthletePageIcon classes="opacity-30" />,
     element: <Athletes />,
     loader: async () => ({ label: "Atletas", path: '/athletes' }),
     handle: {
@@ -111,7 +111,7 @@ export const routes = [
   {
     name: "Entrenamientos",
     path: "trainings",
-    icon: <TrainingPageIcon />,
+    icon: <TrainingPageIcon classes="opacity-30" />,
     element: <Trainings />,
     loader: async () => ({ label: "Entrenamientos" }),
     handle: {
