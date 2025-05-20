@@ -8,7 +8,7 @@ const Header = ({ handleToggleMenu }: {
     const { toggleTheme } = useTheme();
 
     return (
-        <header className="sticky top-0 bg-primary-content grid max-md:grid-cols-1 max-md:grid-rows-2 max-md:gap-6 justify-between items-center z-30 w-full text-primary-text z-9">
+        <header className="sticky top-0 grid max-md:grid-cols-1 max-md:grid-rows-2 max-md:gap-6 justify-between items-center w-full text-primary-text z-9">
             <div className="max-md:row-start-2 md:row-start-1">
                 <Breadcrumbs />
             </div>
