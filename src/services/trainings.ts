@@ -1,16 +1,16 @@
-import trainings from '../mocks/training.json';
-import { Athlete } from '../types/athlete.types';
-import { Training } from '../types/training.types';
+import { supabaseClient } from '../db/config';
 
-export const getTrainingsByAthlete = async (athlete?: Athlete): Promise<Training[] | null> => {
-    if (!athlete) return null;
-
-    const trainings = await Promise.all(athlete.trainings.map(async training => await getTraining(training)));
-
-    // Filtramos posibles valores null y hacemos type assertion
-    return trainings.filter(t => t !== null) as Training[];
+export const getTrainingByAthlete = async (athleteId: number, trainingId: number) => {
+    return await supabaseClient
+        .from('athlete_full_training_view')
+        .select('*')
+        .eq('id_athlete', athleteId)
+        .eq('id_training', trainingId);
 }
 
-export const getTraining = async (id: number | string): Promise<Training | null> => {
-    return await trainings.find(training => training?.id === id) ?? null
+export const getTraining = async (id: number | string) => {
+    return await supabaseClient
+        .from('training')
+        .select('*')
+        .eq('id_training', id);
 }
