@@ -7,7 +7,7 @@ type Props = {
 
 const List: FC<Props> = ({ children, classes }) => {
     return (
-        <ul className={`list bg-base-100 rounded-box w-full${classes ? ` ${classes}` : ''}`}>
+        <ul className={`list rounded-box w-full${classes ? ` ${classes}` : ''}`}>
             {children}
         </ul>
     )
