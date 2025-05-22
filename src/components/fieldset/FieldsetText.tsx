@@ -4,6 +4,7 @@ type Props = {
     id?: string,
     legend?: string,
     placeholder?: string,
+    defaultValue?: string | number,
     value?: string | number,
     label?: string,
     full?: boolean,
@@ -13,7 +14,7 @@ type Props = {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
-export const FieldsetText: FC<Props> = ({ id = '', legend = '', placeholder = '', value = '', label = '', classes = '', inputClasses = '', full = true, readOnly = false, onChange }) => {
+export const FieldsetText: FC<Props> = ({ id = '', legend = '', placeholder = '', value = '', defaultValue = '', label = '', classes = '', inputClasses = '', full = true, readOnly = false, onChange }) => {
     return (
         <fieldset className={`fieldset${classes ? ` ${classes}` : ''}`}>
             {legend && (
@@ -24,9 +25,8 @@ export const FieldsetText: FC<Props> = ({ id = '', legend = '', placeholder = ''
                 type="text"
                 className={`input${full ? ' w-full' : ''}${inputClasses ? ` ${inputClasses}` : ''}${readOnly ? ' opacity-[0.5] cursor-default focus:outline-none focus:ring-0 pointer-events-none' : ''}`}
                 placeholder={placeholder}
-                value={value}
                 readOnly={readOnly}
-                {...onChange ? { onChange } : null}
+                {...onChange && value ? { onChange, value } : { defaultValue }}
                 {...(readOnly ? { tabIndex: -1 } : null)}
             />
             {label && (
