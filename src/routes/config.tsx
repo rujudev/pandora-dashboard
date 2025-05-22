@@ -39,7 +39,6 @@ export const routes = [
           const athlete = await getAthlete(id);
           const name = athlete ? `${athlete.first_name} ${athlete.last_name}` : '';
 
-          console.log(name, athlete);
           return {
             label: name,
             isLast: false
