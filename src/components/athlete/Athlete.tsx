@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { useLoaderData, useLocation, useOutletContext } from "react-router";
-import { AthleteOutletContext } from "../../interfaces/athlete-route-outlet.interface";
+import { AthleteOutletContext } from "../../interfaces/athlete/athlete-route-outlet.interface";
 import { LoaderData } from "../../interfaces/loader-data.interface";
 
 import { Athlete } from "../../interfaces/athlete.interface";
