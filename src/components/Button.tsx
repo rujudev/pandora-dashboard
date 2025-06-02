@@ -1,14 +1,15 @@
-interface ButtonProps {
-  children?: React.ReactNode;
+import { ButtonHTMLAttributes, FC, PropsWithChildren } from "react";
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, text }) => {
+const Button: FC<PropsWithChildren<ButtonProps>> = ({ children, text, ...props }) => {
   return (
-    <a className="flex btn btn-primary gap-2" href="/athletes/new">
+    <button className="flex btn btn-primary gap-2" {...props}>
       {children}
       {text}
-    </a>
+    </button>
   );
 };
 
