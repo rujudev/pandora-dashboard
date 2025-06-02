@@ -22,6 +22,9 @@
     --color-secondary: oklch(48% 0.08 200);
     --color-secondary-content: oklch(95% 0.015 200);
 
+    --color-tertiary: oklch(90% 11% 91);
+    --color-tertiary-content: oklch(25% 0.03 91);
+
     --color-accent: oklch(52% 0.1 240);
     --color-accent-content: oklch(95% 0.02 240);
 
@@ -61,6 +64,9 @@
     --color-secondary: oklch(80% 0.09 200);
     --color-secondary-content: oklch(20% 0.02 200);
 
+    --color-tertiary: oklch(96% 13% 91);
+    --color-tertiary-content: oklch(30% 0.03 91);
+
     --color-accent: oklch(70% 0.1 240);
     --color-accent-content: oklch(15% 0.02 240);
 
@@ -82,6 +88,68 @@
     --noise: 0;
 }
 
+@layer utilities {
+    .bg-tertiary {
+        background-color: var(--color-tertiary);
+    }
+
+    .bg-tertiary-content {
+        background-color: var(--color-tertiary-content);
+    }
+
+    .text-tertiary {
+        color: var(--color-tertiary);
+    }
+
+    .text-tertiary-content {
+        color: var(--color-tertiary-content);
+    }
+
+    .border-tertiary {
+        border-color: var(--color-tertiary);
+    }
+
+    .ring-tertiary {
+        --tw-ring-color: var(--color-tertiary);
+    }
+
+    .outline-tertiary {
+        outline-color: var(--color-tertiary);
+    }
+
+    .fill-tertiary {
+        fill: var(--color-tertiary);
+    }
+
+    .stroke-tertiary {
+        stroke: var(--color-tertiary);
+    }
+
+    .status-tertiary {
+        background-color: var(--color-tertiary);
+        color: var(--color-tertiary);
+    }
+
+    .status-info {
+        background-color: var(--color-info);
+        color: var(--color-info);
+    }
+
+    .status-success {
+        background-color: var(--color-success);
+        color: var(--color-success);
+    }
+
+    .status-warning {
+        background-color: var(--color-warning);
+        color: var(--color-warning);
+    }
+
+    .status-error {
+        background-color: var(--color-error);
+        color: var(--color-error);
+    }
+}
 
 html {
     width: 100dvw;
@@ -113,4 +181,8 @@ html {
             border-color: var(--color-primary) !important;
         }
     }
+}
+
+:where( :root:has(.modal-open, .modal[open], .modal:target, .modal-toggle:checked, .drawer:not(.drawer-open) > .drawer-toggle:checked)) {
+    scrollbar-gutter: auto;
 }
