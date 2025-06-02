@@ -1,14 +1,15 @@
 import { createBrowserRouter } from "react-router";
 import App from "../App.tsx";
 import AthleteComponent from "../components/athlete/Athlete.tsx";
-import AthleteTraining from "../components/athlete/AthleteTraining.tsx";
 import AthleteTrainingsHistory from "../components/athlete/AthleteTrainingsHistory.tsx";
 import { AthletePageIcon, DashboardPageIcon, TrainingPageIcon } from "../components/Icon.tsx";
+import { AthleteTrainingContextWrapper } from "../context/athlete-training.context.tsx";
+import ButtonStateProvider from "../context/button-state.context.tsx";
 import Athletes from "../pages/Athletes.tsx";
 import Home from "../pages/Home.tsx";
 import Trainings from "../pages/Trainings.tsx";
 import { getAthlete } from "../services/athletes.ts";
-import { getTrainingByAthlete } from "../services/trainings.ts";
+import { getAthleteTrainings, getTrainingByAthlete } from "../services/trainings.ts";
 import { CrumbData } from "../types/breadcrumb.types.ts";
 
 export const routes = [
@@ -26,7 +27,11 @@ export const routes = [
     name: "Atletas",
     path: "athletes",
     icon: <AthletePageIcon classes="opacity-30" />,
-    element: <Athletes />,
+    element: (
+      <ButtonStateProvider>
+        <Athletes />
+      </ButtonStateProvider>
+    ),
     loader: async () => ({ label: "Atletas", path: '/athletes' }),
     handle: {
       crumb: (crumbData: CrumbData) => ({ label: crumbData?.label, path: crumbData.path }),
@@ -70,11 +75,17 @@ export const routes = [
             element: <AthleteTrainingsHistory />,
             loader: async ({ params }) => {
               const id = params.athleteId ? Number(params.athleteId) : 0;
-              const athlete = await getAthlete(id);
+              const { data: athleteData, error: athleteError } = await getAthlete(id);
 
-              const athleteName = athlete ? `${athlete.first_name} ${athlete.last_name}` : '';
+              if (athleteError) throw new Error(athleteError.message)
 
-              return { label: athleteName, isLast: true, athlete }
+              const athleteName = athleteData ? `${athleteData.first_name} ${athleteData.last_name}` : '';
+
+              const { data: trainingsData, error: trainingsError } = await getAthleteTrainings(id);
+
+              if (trainingsError) throw new Error(trainingsError.message);
+
+              return { label: athleteName, isLast: true, athlete: athleteData, trainings: trainingsData }
             },
             handle: {
               crumb: (crumbData: CrumbData) => ({ label: 'Historial de entrenamientos', path: `/athletes/${crumbData?.athlete?.id_athlete}/trainings`, isLast: false })
@@ -82,7 +93,7 @@ export const routes = [
             children: [
               {
                 path: ':trainingId/edit',
-                element: <AthleteTraining />,
+                element: <AthleteTrainingContextWrapper />,
                 loader: async ({ params }) => {
                   const athleteId = params.athleteId ? Number(params.athleteId) : 0;
                   const trainingId = params.trainingId ? Number(params.trainingId) : 0;
@@ -91,6 +102,8 @@ export const routes = [
                   const { data: dataTraining, error: errorTraining } = await getTrainingByAthlete(athleteId, trainingId);
                   const training = dataTraining?.[0];
 
+                  console.log(training);
+                  debugger;
                   const formatter = new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short', year: '2-digit' });
                   const formatterStartDate = formatter.format(new Date(training.start_date));
                   const formatterEndDate = formatter.format(new Date(training.end_date));
