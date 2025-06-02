@@ -1,7 +1,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { supabaseClient } from "../db/config";
-import { MuscleMovementWithWeightRef } from "../interfaces/muscle-movement-weight.interface";
-import { MuscleMovement } from "../interfaces/muscle-movement.interface";
+import { MuscleMovementWithWeightRef } from "../interfaces/movement/muscle-movement-weight.interface";
+import { MuscleMovement } from "../interfaces/movement/muscle-movement.interface";
 import muscleMovements from "../mocks/muscle_movements.json";
 import trainingMovements from "../mocks/training_movements.json";
 

@@ -1,7 +1,7 @@
-import { AthleteTraining } from '../interfaces/athlete-training.interface';
+import { PostgrestSingleResponse } from '@supabase/supabase-js';
+import { supabaseClient } from '../db/config';
 import { Athlete } from '../interfaces/athlete.interface';
 import athletes from '../mocks/athletes.json';
-import athleteTrainings from '../mocks/athletes_trainings.json';
 
 export const getAthletes = async (): Promise<Athlete[]> => {
     return await athletes.map(athlete => ({
@@ -10,11 +10,10 @@ export const getAthletes = async (): Promise<Athlete[]> => {
     }));
 }
 
-export const getAthlete = async (id: number | string) => {
-    return await athletes.find(athlete => athlete?.id_athlete === id)
-}
-
-export const getAthleteTrainings = async (id: number | string): Promise<AthleteTraining[]> => {
-    console.log(id);
-    return await athleteTrainings.filter(athleteTraining => athleteTraining.id_athlete === id);
+export const getAthlete = async (id: number | string): Promise<PostgrestSingleResponse<Athlete>> => {
+    return await supabaseClient
+        .from('athlete_view')
+        .select('*')
+        .eq('id_athlete', id)
+        .single();
 }
