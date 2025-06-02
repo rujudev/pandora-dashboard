@@ -57,39 +57,37 @@ export const FieldsetDate: FC<Props> = (props) => {
         <>
             <fieldset className="fieldset relative">
                 <legend className="fieldset-legend">{legend}</legend>
-                <div >
-                    <button
-                        id={id}
-                        ref={setReference}
-                        popoverTarget="rdp-popover"
-                        className={`flex justify-between input input-border${full ? ' w-full' : ''}`}
-                        type="button"
-                        onClick={() => setOpen(!open)}
-                    >
-                        <span className={`text-base-content${!selectedDate ? ' opacity-[0.5]' : ''}`}>{selectedDate ? new Date(selectedDate).toLocaleDateString() : placeholder}</span>
-                        <Calendar classes="opacity-[0.5]" />
-                    </button>
-                    {open && (
-                        <Card ref={setFloating} classes="z-10" style={{ ...floatingStyles }}>
-                            <CardBody>
-                                <DayPicker
-                                    {...props}
-                                    selected={selectedDate}
-                                    required={false}
-                                    disabled={{ before: new Date() }}
-                                    classNames={{
-                                        today: 'text-info',
-                                        selected: `${defaultClassNames.selected} text-primary-content`,
-                                        day_button: `${defaultClassNames.day_button} hover:text-secondary duration-100 ease-linear`,
-                                        chevron: `fill-primary hover:fill-secondary duration-100 ease-linear cursor-pointer`
-                                    }}
-                                    captionLayout="dropdown"
-                                    showOutsideDays
-                                />
-                            </CardBody>
-                        </Card>
-                    )}
-                </div>
+                <button
+                    id={id}
+                    ref={setReference}
+                    popoverTarget="rdp-popover"
+                    className={`flex justify-between input input-border${full ? ' w-full' : ''}`}
+                    type="button"
+                    onClick={() => setOpen(!open)}
+                >
+                    <span className={`text-base-content${!selectedDate ? ' opacity-[0.5]' : ''}`}>{selectedDate ? new Date(selectedDate).toLocaleDateString() : placeholder}</span>
+                    <Calendar classes="opacity-[0.5]" />
+                </button>
+                {open && (
+                    <Card ref={setFloating} classes="z-10" style={{ ...floatingStyles }}>
+                        <CardBody>
+                            <DayPicker
+                                {...props}
+                                selected={selectedDate}
+                                required={false}
+                                disabled={{ before: new Date() }}
+                                classNames={{
+                                    today: 'text-info',
+                                    selected: `${defaultClassNames.selected} text-primary-content`,
+                                    day_button: `${defaultClassNames.day_button} hover:text-secondary duration-100 ease-linear`,
+                                    chevron: `fill-primary hover:fill-secondary duration-100 ease-linear cursor-pointer`
+                                }}
+                                captionLayout="dropdown"
+                                showOutsideDays
+                            />
+                        </CardBody>
+                    </Card>
+                )}
                 {
                     label && (
                         <p className="label">{label}</p>
