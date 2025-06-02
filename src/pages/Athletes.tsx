@@ -1,7 +1,6 @@
-import { ReactElement, useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router";
-import Button from "../components/Button";
-import HeaderPage from "../components/HeaderPage";
+import { useEffect, useState } from "react";
+import { Link, Outlet, useLocation } from "react-router";
+import HeaderPage, { HeaderProps } from "../components/HeaderPage";
 import { Plus } from "../components/Icon";
 import AthleteActions from "../components/table/AthleteActions";
 import Table, { Column } from "../components/table/Table";
@@ -9,18 +8,10 @@ import { Athlete } from "../interfaces/athlete.interface";
 import { getAthletes } from "../services/athletes";
 import { calculateAge } from "../utils/date";
 
-export type HeaderConfig = {
-    hasBackButton: boolean,
-    hasActionButton: boolean,
-    title: string,
-    description: string | ReactElement,
-}
-
 const Athletes = () => {
     const { pathname } = useLocation();
-    const [headerConfig, setHeaderConfig] = useState<HeaderConfig>({
+    const [headerConfig, setHeaderConfig] = useState<HeaderProps>({
         hasBackButton: false,
-        hasActionButton: false,
         title: '',
         description: '',
     })
@@ -65,9 +56,14 @@ const Athletes = () => {
         isAthletesPage &&
             setHeaderConfig({
                 hasBackButton: false,
-                hasActionButton: true,
                 title: 'Atletas',
-                description: "Gestiona los perfiles y datos de los atletas de tu equipo."
+                description: "Gestiona los perfiles y datos de los atletas de tu equipo.",
+                rightContent: (
+                    <Link className="btn btn-primary" to="/athletes/new">
+                        <Plus />
+                        Añadir atleta
+                    </Link>
+                )
             })
     }, [pathname])
 
@@ -77,13 +73,8 @@ const Athletes = () => {
                 title={headerConfig.title}
                 description={headerConfig.description}
                 hasBackButton={headerConfig.hasBackButton}
-            >
-                {headerConfig.hasActionButton && (
-                    <Button text="Nuevo atleta">
-                        <Plus />
-                    </Button>
-                )}
-            </HeaderPage>
+                rightContent={headerConfig.rightContent}
+            />
             <main className="flex flex-col gap-4">
                 {
                     pathname === '/athletes' ? (
