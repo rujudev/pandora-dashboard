@@ -1,16 +1,16 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, ReactNode } from "react";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "./Icon";
 
-interface HeaderProps {
-  children?: ReactElement;
+export interface HeaderProps {
   title?: string | ReactElement;
   description?: string | ReactElement;
   hasBackButton?: boolean;
+  rightContent?: ReactNode;
 }
 
 const HeaderPage: React.FC<HeaderProps> = ({
-  children,
+  rightContent,
   title,
   description,
   hasBackButton = false
@@ -33,7 +33,7 @@ const HeaderPage: React.FC<HeaderProps> = ({
             </p>
           </div>
         </div>
-        {children}
+        {rightContent}
       </header>
     </>
   );
