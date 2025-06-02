@@ -33,8 +33,8 @@ const Aside = ({ handleToggleMenu, isMenuOpen }: {
                 <nav className="grid gap-1 w-full">
                     <ul className={`menu w-full flex flex-col gap-2${isOpen ? ' p-0' : ''}`}>
                         {navItems.map((item, index) => (
-                            <Link className={`col-span-2 flex`} to={item.link}>
-                                <li key={index} className="w-full">
+                            <Link key={index} className={`col-span-2 flex`} to={item.link}>
+                                <li className="w-full">
                                     <span className={`gap-3${!isMenuOpen ? ` [&>svg]:w-[20px] w-[45px]` : ''}`}>
                                         {item.icon}
                                         <span className={`overflow-hidden transition-[width,display] duration-100 transition-discrete ${isMenuOpen ? 'sm:block sm:w-full' : 'sm:starting:w-full sm:w-0 sm:hidden'}`}>{item.name}</span>
