@@ -15,18 +15,20 @@ export type Column<T = Record<string, any>> = {
     sortingOrder?: 'asc' | 'desc',
     classes?: string,
     type?: ColType,
-    render?: (data?: any) => ReactNode
+    render?: (data?: any, countItems?: number) => ReactNode
 }
 
 type Props<T extends Record<string, any> = Record<string, any>> = {
     rows: Row<T>[],
     columns: Column[],
-    classes: string,
+    classes?: string,
+    thClasses?: string,
+    tdClasses?: string,
     checkboxSelection?: boolean,
     disableTHead?: boolean
 }
 
-const Table = <T extends Record<string, any> = Record<string, any>>({ rows, columns, classes, checkboxSelection, disableTHead }: Props<T>) => {
+const Table = <T extends Record<string, any> = Record<string, any>>({ rows, columns, classes, thClasses, tdClasses, checkboxSelection = false, disableTHead }: Props<T>) => {
     const mappedColumns = columns.map(column => {
         let mappedColumn = { ...column };
         const width = column?.width;
@@ -61,12 +63,21 @@ const Table = <T extends Record<string, any> = Record<string, any>>({ rows, colu
                     <thead>
                         <tr>
                             {mappedColumns.map(({ field, width, render, headerName = '' }) => {
+                                const isSelectionCol = field === 'selection';
                                 const isActionCol = field === 'actions';
 
+                                if (isSelectionCol && !checkboxSelection) return null
+
+                                if (isSelectionCol || isActionCol) {
+                                    return (
+                                        <th {...(isActionCol && { className: 'text-right' })}>
+                                            {headerName}
+                                        </th>
+                                    )
+                                }
+
                                 return (
-                                    <th {...width || isActionCol ? { className: `${width ? width : ''}${isActionCol ? ` text-right` : ''}` } : null}>
-                                        {field === 'selection' && render ? render() : headerName}
-                                    </th>
+                                    <th {...(thClasses && { className: thClasses })}>{headerName}</th>
                                 )
                             })}
                         </tr>
@@ -78,13 +89,30 @@ const Table = <T extends Record<string, any> = Record<string, any>>({ rows, colu
                             <tr key={rowIndex}>
                                 {
                                     mappedColumns.map(({ field, render, width }, colIndex) => {
+                                        const isSelectionCol = field === 'selection';
                                         const isActionCol = field === 'actions';
 
-                                        return (
-                                            <td key={field || colIndex} className={`${width ? `${width}` : ''}${isActionCol ? ` flex justify-end` : ''}${classes ? classes : ''}`}>
-                                                {render ? render(row) : row[field]}
-                                            </td>
-                                        )
+                                        if (isSelectionCol && !checkboxSelection) return null;
+
+                                        if ((isSelectionCol || isActionCol) && render) {
+                                            return (
+                                                <td className={`${isActionCol ? `align-middle text-right` : ''}`}>
+                                                    {isActionCol ? (
+                                                        <div className="flex justify-end">
+                                                            {render(row)}
+                                                        </div>
+                                                    ) : render(row)}
+                                                </td>
+                                            )
+                                        }
+
+                                        if (!isSelectionCol || !isActionCol) {
+                                            return (
+                                                <td key={field || colIndex} {...(tdClasses && { className: tdClasses })}>
+                                                    {render ? render(row) : row[field]}
+                                                </td>
+                                            )
+                                        }
                                     })
                                 }
                             </tr>

@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
 import { Athlete } from "../../interfaces/athlete.interface"
-import { getAthleteTrainings } from "../../services/athletes"
+import { getAthleteTrainings } from "../../services/trainings"
 import { EditUser, Remove, ViewTraining } from "../Icon"
 
 const AthleteActions = ({ athlete }: { athlete: Athlete }) => {
     const [athleteHasTrainings, setAthleteHasTrainings] = useState(false)
 
     const checkIfAthleteHasTrainings = async () => {
-        const athleteTrainings = await getAthleteTrainings(athlete.id_athlete);
+        const { data: athleteTrainingsData, error: athleteTrainingsError } = await getAthleteTrainings(athlete.id_athlete);
 
-        setAthleteHasTrainings(athleteTrainings.length > 0)
+        if (athleteTrainingsError) throw new Error(athleteTrainingsError.message);
+
+        setAthleteHasTrainings(athleteTrainingsData.length > 0)
     }
 
     useEffect(() => {
