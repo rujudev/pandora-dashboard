@@ -1,20 +1,12 @@
-import { MuscleMovementWithWeightRef } from "../../interfaces/muscle-movement-weight.interface";
+import { useAthleteTraining } from "../../hooks/useAthleteTraining";
 import { Movement, Plus } from "../Icon";
 import List from "../list/List";
+import OpenModalButton from "../modal/OpenModalButton";
+import AddMovementForm from "./AddMovementForm";
 import MuscleMovement from "./MuscleMovement";
 
-const MuscleMovements = ({ muscleMovements, onChangeWeightRef, onDeleteMuscleMovement }: {
-    muscleMovements: MuscleMovementWithWeightRef[],
-    onChangeWeightRef: (movementId: number, value: number) => void,
-    onDeleteMuscleMovement: (movementId: number) => void
-}) => {
-    const onHandleChange = (movementId: number, value: number) => {
-        onChangeWeightRef(movementId, Number(value));
-    }
-
-    const onHandleDelete = (movementId: number) => {
-        onDeleteMuscleMovement(movementId);
-    }
+const MuscleMovements = () => {
+    const { state, addMovement } = useAthleteTraining();
 
     return (
         <>
@@ -23,19 +15,23 @@ const MuscleMovements = ({ muscleMovements, onChangeWeightRef, onDeleteMuscleMov
                     <Movement />
                     <h1 className="text-lg">Movimientos musculares</h1>
                 </div>
-                <button className="flex btn btn-primary gap-2 w-fit">
-                    <Plus />
-                    Nuevo movimiento muscular
-                </button>
+                <OpenModalButton
+                    buttonIcon={<Plus />}
+                    buttonText="Nuevo movimiento muscular"
+                    modalContent={
+                        <AddMovementForm movementsInTraining={state.muscle_movements} addMovement={addMovement} />
+                    }
+                    modalId="add-muscle-movement"
+                />
             </div>
-            {muscleMovements && muscleMovements?.length > 0 && (
+            {state.muscle_movements && state.muscle_movements?.length > 0 && (
                 <List>
-                    {muscleMovements.map(movement =>
+                    {state.muscle_movements.map(({ id_movement, movement_name, weight_ref }) =>
                         <MuscleMovement
-                            key={movement.id_movement}
-                            movement={movement}
-                            onChange={onHandleChange}
-                            onDelete={onHandleDelete}
+                            key={id_movement}
+                            id={id_movement}
+                            name={movement_name}
+                            weight={weight_ref}
                         />)}
                 </List>
             )}
