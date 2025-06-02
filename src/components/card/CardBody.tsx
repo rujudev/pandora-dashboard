@@ -1,10 +1,11 @@
 import { ReactNode } from "react"
 
-const CardBody = ({ children }: {
+const CardBody = ({ classes, children }: {
+    classes?: string,
     children: ReactNode
 }) => {
     return (
-        <div className="card-body">
+        <div className={`card-body${classes ? ` ${classes}` : ''}`}>
             {children}
         </div>
     )
