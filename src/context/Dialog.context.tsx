@@ -1,23 +1,34 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
 
 interface DialogData {
     id: string
     content: ReactNode
 }
 
-interface DialogContextProps {
-    dialog: DialogData | null
-    setDialog: Dispatch<SetStateAction<DialogData | null>>
+interface DialogContextType {
+    stack: DialogData[]
+    setDialog: (dialog: DialogData) => void
+    closeDialog: (dialogId: string) => void
 }
-export const DialogContext = createContext<DialogContextProps | null>(null);
+export const DialogContext = createContext<DialogContextType | null>(null);
 
 export const DialogProvider = ({ children }: {
     children: ReactNode
 }) => {
-    const [dialog, setDialog] = useState<DialogData | null>(null);
+    const [stack, setStack] = useState<DialogData[]>([]);
+
+    const setDialog = (newDialog: DialogData) => {
+        setStack((prevDialogs: DialogData[]) => [...prevDialogs, newDialog])
+    }
+
+    const closeDialog = (dialogId: string) => {
+        setTimeout(() => {
+            setStack((prevDialogs: DialogData[]) => prevDialogs.filter(dialog => dialog.id !== dialogId))
+        }, 200)
+    }
 
     return (
-        <DialogContext.Provider value={{ dialog, setDialog }
+        <DialogContext.Provider value={{ stack, setDialog, closeDialog }
         }>
             {children}
         </DialogContext.Provider>
