@@ -129,7 +129,8 @@ const AddMovementForm: FC<Props> = ({ movementsInTraining, addMovement }) => {
 
                                     setMovementDraft((prev: MuscleMovementWithWeightRef) => ({
                                         ...prev,
-                                        movement_name: movementName
+                                        movement_name: movementName,
+                                        is_new: true
                                     }))
                                 }}
                             />
