@@ -1,8 +1,8 @@
 import { Link } from "react-router";
-import { CrumbData } from "../../types/breadcrumb.types";
+import { Crumb } from "../../context/breadcrumb.context";
 
 interface BreadcrumbProps {
-    crumb: CrumbData,
+    crumb: Crumb,
 }
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ crumb }) => {
