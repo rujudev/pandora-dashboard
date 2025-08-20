@@ -1,3 +1,4 @@
 export interface Intensity {
-    id_intensity: number;
+    id_intensity?: number;
+    is_new?: boolean;
 }
