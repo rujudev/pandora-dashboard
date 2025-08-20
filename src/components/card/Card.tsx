@@ -9,7 +9,7 @@ interface Props {
 
 const Card: FC<Props> = ({ ref, children, classes, style }) => {
     return (
-        <div ref={ref} className={`card card-border border-base-300 bg-base-100 col-span-2 p-6${classes ? ` ${classes}` : ''}`} {...style ? { style } : null}>
+        <div ref={ref} className={`card card-border border-base-300 bg-base-100 p-6${classes ? ` ${classes}` : ''}`} {...style ? { style } : null}>
             {children}
         </div>
     )
