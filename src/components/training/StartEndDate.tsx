@@ -1,27 +1,55 @@
+import { parseISO } from "date-fns"
 import { useAthleteTraining } from "../../hooks/useAthleteTraining"
 import { FieldsetDate } from "../fieldset"
 
-const StartEndDate = ({ classes }: { classes?: string }) => {
+const StartEndDateSkeleton = () => (
+    <>
+        <div className="flex flex-col gap-4">
+            <div className="skeleton h-5 w-1/4"></div>
+            <div className="skeleton h-10 w-full"></div>
+        </div>
+        <div className="flex flex-col gap-4">
+            <div className="skeleton h-5 w-1/4"></div>
+            <div className="skeleton h-10 w-full"></div>
+        </div>
+    </>
+)
+const StartEndDate = ({ classes, isTrainingCompleted = false }: { classes?: string, isTrainingCompleted: boolean }) => {
     const { state, setTrainingDate } = useAthleteTraining()
 
     return (
         <div {...classes ? { className: classes } : null}>
-            <FieldsetDate
-                mode="single"
-                legend="Fecha inicio"
-                placeholder="Selecciona una fecha"
-                selected={new Date(state.start_date)}
-                onSelect={date => date && setTrainingDate(date, 'start_date')}
-                showWeekNumber
-            />
-            <FieldsetDate
-                mode="single"
-                legend="Fecha fin"
-                placeholder="Selecciona una fecha"
-                selected={new Date(state.end_date)}
-                onSelect={date => date && setTrainingDate(date, 'end_date')}
-                showWeekNumber
-            />
+            {state ? (
+                <>
+                    <FieldsetDate
+                        mode="single"
+                        legend="Fecha inicio"
+                        placeholder="Selecciona una fecha"
+                        selected={parseISO(state.start_date)}
+                        onSelect={date => date && setTrainingDate(date, 'start_date')}
+                        disabled={[
+                            parseISO(state.start_date),
+                            { before: new Date(), after: parseISO(state.end_date) }
+                        ]}
+                        showWeekNumber
+                        isFieldDisabled={isTrainingCompleted}
+                    />
+                    <FieldsetDate
+                        mode="single"
+                        legend="Fecha fin"
+                        placeholder="Selecciona una fecha"
+                        selected={parseISO(state.end_date)}
+                        disabled={[
+                            parseISO(state.end_date),
+                            { before: new Date() }
+                        ]}
+                        onSelect={date => date && setTrainingDate(date, 'end_date')}
+                        showWeekNumber
+                        isFieldDisabled={isTrainingCompleted}
+                    />
+                </>
+            ) : <StartEndDateSkeleton />
+            }
         </div>
     )
 }
