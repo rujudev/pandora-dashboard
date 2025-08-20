@@ -1,7 +1,11 @@
 import { isEqual } from 'lodash';
 import { FC, useEffect, useState } from "react";
 import { useDialog } from "../../hooks/useDialog";
-import { ExerciseWithIntensity, IntensityWithSeriesRepetitionsZoneAndSets, MovementsWithWeightRef } from "../../interfaces/interfaces_compuestas.interface";
+import { ExerciseWithIntensity } from '../../interfaces/exercise/exercise-with-intensity.interface';
+import { IntensityWithSeriesRepetitionsZoneAndSets } from '../../interfaces/intensity/intensity-with-series-repetitions-zone-and-sets.interface';
+import { MuscleMovementWithWeightRef } from '../../interfaces/movement/muscle-movement-weight.interface';
+import { getExercises } from '../../services/exercises';
+import Button from '../Button';
 import Card from "../card/Card";
 import CardBody from "../card/CardBody";
 import { FieldsetSelect, FieldsetText } from "../fieldset";
@@ -17,26 +21,39 @@ const initialExerciseState: ExerciseWithIntensity = {
     id_exercise: 0,
     id_movement: 0,
     intensities: [],
-    remarks: ''
+    remarks: '',
+    is_new: false
 }
 
-const initialSelectedMovement: MovementsWithWeightRef = {
+const initialSelectedMovement: MuscleMovementWithWeightRef = {
     id_movement: 0,
     movement_name: '',
     weight_ref: 0
 }
 
 interface Props {
-    muscleMovements: MovementsWithWeightRef[];
+    muscleMovements: MuscleMovementWithWeightRef[];
+    existingSessionExercises?: ExerciseWithIntensity[];
     modalId?: string;
     initialExercise?: ExerciseWithIntensity;
     onSave: (exercise: ExerciseWithIntensity) => void;
 }
-const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercise, onSave }) => {
+const ExerciseModalForm: FC<Props> = ({
+    muscleMovements,
+    modalId,
+    initialExercise,
+    existingSessionExercises,
+    onSave
+}) => {
     const { closeDialog } = useDialog()
+    const [exercises, setExercises] = useState<ExerciseWithIntensity[]>([]);
     const [exerciseDraft, setExerciseDraft] = useState<ExerciseWithIntensity>(initialExercise ?? initialExerciseState)
-    const [movementInfo, setMovementInfo] = useState<MovementsWithWeightRef>(initialSelectedMovement)
+    const [movementInfo, setMovementInfo] = useState<MuscleMovementWithWeightRef>(initialSelectedMovement)
     const isEditing = Boolean(initialExercise);
+
+    useEffect(() => {
+        getExercises().then(({ data }) => data && setExercises(data as ExerciseWithIntensity[]))
+    }, [])
 
     useEffect(() => {
         if (initialExercise) {
@@ -75,6 +92,7 @@ const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercis
 
                 const maxPercentage = Math.max(...percentages);
                 const maxWeight = (movementInfo.weight_ref * maxPercentage) / 100
+
 
                 return (
                     <div className="flex items-center justify-around">
@@ -128,14 +146,23 @@ const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercis
         }
     }
 
-    const handleIntensityModalForm = (intensity: IntensityWithSeriesRepetitionsZoneAndSets) => {
-        setExerciseDraft(prevExercise => ({
-            ...prevExercise,
-            intensities: [
-                ...prevExercise.intensities,
-                intensity
-            ]
-        }))
+    const handleAddIntensityModalForm = (intensity: IntensityWithSeriesRepetitionsZoneAndSets) => {
+        setExerciseDraft(prevExercise => {
+            const lastIndexOfIntensities = exerciseDraft.intensities[exerciseDraft.intensities.length - 1]?.id_intensity || 0;
+
+            const newIntensity: IntensityWithSeriesRepetitionsZoneAndSets = {
+                ...intensity,
+                id_intensity: lastIndexOfIntensities + 1
+            }
+
+            return {
+                ...prevExercise,
+                intensities: [
+                    ...prevExercise.intensities,
+                    { ...newIntensity, is_new: true }
+                ]
+            }
+        })
     }
 
     const handleUpdateIntensity = (intensity: IntensityWithSeriesRepetitionsZoneAndSets) => {
@@ -146,7 +173,7 @@ const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercis
 
                 return {
                     ...prevIntensity,
-                    ...intensity
+                    intensity
                 }
             })
         }))
@@ -161,34 +188,38 @@ const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercis
         <div className="flex flex-col gap-5">
             <div className="flex flex-col text-sm bg-base-200 rounded-xl">
                 <h2 className="text-xl font-semibold text-center my-4">
-                    {isEditing ? `Editar "${exerciseDraft?.exercise_name}"` : 'Nuevo ejercicio'}
+                    {isEditing ? `Editar "${exerciseDraft?.exercise_name}"` : 'Añadir ejercicio a la sesión'}
                 </h2>
                 <div className="flex flex-col pl-4 pr-4 pb-4 gap-5">
                     <div className="grid grid-cols-2 gap-5 bg-base-100 rounded-xl p-6">
-                        <FieldsetText
-                            legend="Nombre"
-                            placeholder="Nombre"
-                            value={exerciseDraft.exercise_name}
+                        <FieldsetSelect
+                            legend="Lista de ejercicios"
+                            placeholder="Selecciona un ejercicio"
+                            value={exerciseDraft.id_exercise}
+                            options={exercises.map(({ id_exercise, exercise_name }) => ({
+                                id: id_exercise!,
+                                option: exercise_name,
+                                disabled: existingSessionExercises?.some(ex => ex.id_exercise === id_exercise)
+                            }))}
                             onChange={(e) => {
-                                const exercise_name = e.target.value;
-                                setExerciseDraft((pE: ExerciseWithIntensity) => ({ ...pE, exercise_name }));
+                                const exerciseId = Number(e.target.value);
+                                const { abreviation, remarks } = exercises.find(ex => ex.id_exercise === exerciseId)!
+
+                                setExerciseDraft((prev) => ({ ...prev, id_exercise: exerciseId, abreviation, remarks }))
                             }}
                         />
                         <FieldsetText
                             legend="Abreviatura"
                             placeholder="Abreviatura"
                             value={exerciseDraft.abreviation}
-                            onChange={(e) => {
-                                const abreviation = e.target.value;
-                                setExerciseDraft((pE: ExerciseWithIntensity) => ({ ...pE, abreviation }));
-                            }}
+                            readOnly
                         />
                         <FieldsetSelect
                             legend="Movimiento muscular"
                             placeholder="Selecciona un movimiento muscular"
                             value={exerciseDraft.id_movement || 'null'}
                             options={muscleMovements.map(({ id_movement, movement_name }) =>
-                                ({ id: id_movement, option: movement_name }))}
+                                ({ id: id_movement ?? 1, option: movement_name }))}
                             onChange={(e) => {
                                 const movementInfoId = Number(e.target.value);
                                 handleMovementChange(movementInfoId)
@@ -212,7 +243,7 @@ const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercis
                                         mode='create'
                                         modalId="add-intensity"
                                         weight={movementInfo.weight_ref}
-                                        onSubmit={handleIntensityModalForm}
+                                        onSubmit={handleAddIntensityModalForm}
                                     />
                                 }
                                 modalId="add-intensity"
@@ -238,7 +269,7 @@ const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercis
                 </div>
             </div>
             <div className="flex justify-end gap-5">
-                <button
+                <Button
                     className="flex btn btn-secondary gap-2"
                     command="close"
                     commandfor={modalId}
@@ -247,13 +278,13 @@ const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercis
                     }}
                 >
                     Cancelar
-                </button>
-                <button
+                </Button>
+                <Button
                     command="close"
                     commandfor={modalId}
                     className={`"flex btn btn-${isEditing ? 'warning' : 'primary'} gap-2"`}
                     onClick={() => {
-                        onSave(exerciseDraft)
+                        onSave(exerciseDraft);
 
                         if (!isEditing) resetForm()
 
@@ -262,7 +293,7 @@ const ExerciseModalForm: FC<Props> = ({ muscleMovements, modalId, initialExercis
                     disabled={isEditing && isEqual(initialExercise, exerciseDraft)}
                 >
                     {isEditing ? 'Actualizar ejercicio' : 'Guardar ejercicio'}
-                </button>
+                </Button>
             </div>
         </div>
     )
