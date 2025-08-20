@@ -1,8 +1,8 @@
 import { FC, useState } from "react";
 import { useAthleteTraining } from "../../hooks/useAthleteTraining";
-import { IntensityWithSeriesRepetitionsZoneAndSets } from "../../interfaces/interfaces_compuestas.interface";
+import { IntensityWithSeriesRepetitionsZoneAndSets } from "../../interfaces/intensity/intensity-with-series-repetitions-zone-and-sets.interface";
 import { FieldsetText } from "../fieldset";
-import { Check, Edit } from "../Icon";
+import { Check, Edit, Trash } from "../Icon";
 
 export const zoneColor: Record<string, { colorId: string, text: string; bg: string; contrastText: string }> = {
     Z1: {
@@ -37,15 +37,16 @@ export const zoneColor: Record<string, { colorId: string, text: string; bg: stri
     }
 };
 
-const Set = ({ id, sessionId, exerciseId, intensityId, percentage, weight }: {
+const Set = ({ id, blockId, sessionId, exerciseId, intensityId, percentage, weight }: {
     id: number,
+    blockId: number,
     sessionId: number,
     exerciseId: number,
     intensityId: number,
     percentage: number,
     weight: number
 }) => {
-    const { setSessionExerciseIntensitySetPercentage } = useAthleteTraining();
+    const { setSetPercent } = useAthleteTraining();
     const [isEditing, setIsEditing] = useState(false);
     const [newPercentage, setNewPercentage] = useState<number>(percentage);
     const calculatedWeight = (weight * percentage) / 100;
@@ -78,7 +79,7 @@ const Set = ({ id, sessionId, exerciseId, intensityId, percentage, weight }: {
                     setIsEditing(false);
 
                     if (newPercentage !== 0 && newPercentage !== percentage)
-                        setSessionExerciseIntensitySetPercentage(sessionId, exerciseId, intensityId, id, newPercentage);
+                        setSetPercent(blockId, sessionId, exerciseId, intensityId, id, newPercentage);
 
                 } else {
                     toggleIsEditing()
@@ -91,12 +92,14 @@ const Set = ({ id, sessionId, exerciseId, intensityId, percentage, weight }: {
 }
 
 interface Props {
+    blockId: number,
     sessionId: number,
     exerciseId: number,
     intensity: IntensityWithSeriesRepetitionsZoneAndSets,
     weightRef: number
 }
 const Intensity: FC<Props> = ({
+    blockId,
     sessionId,
     exerciseId,
     intensity,
@@ -104,8 +107,9 @@ const Intensity: FC<Props> = ({
 }) => {
     const { id_intensity: intensityId, repetitions: initRepetitions, series: initSeries, zone, sets } = intensity;
     const {
-        setSessionExerciseIntensitySeries,
-        setSessionExerciseIntensityRepetitions
+        removeIntensity,
+        setIntensitySeries,
+        setIntensityReps
     } = useAthleteTraining();
 
     const [repetitions, setRepetitions] = useState<number>(initRepetitions);
@@ -123,9 +127,16 @@ const Intensity: FC<Props> = ({
 
     return (
         <div className="list-col-grow flex flex-col gap-3 rounded-lg border-1 border-neutral pb-3">
-            <header className={`flex justify-between gap-4 py-4 ${zoneColor[zone].bg} ${zoneColor[zone].contrastText} font-semibold rounded-tl-lg rounded-tr-lg px-3`}>
+            <header className={`flex items-center justify-between gap-4 py-4 ${zoneColor[zone].bg} ${zoneColor[zone].contrastText} font-semibold rounded-tl-lg rounded-tr-lg px-3`}>
                 <h2>{zone.toUpperCase()}</h2>
                 <span>{`${minPercentage}%${maxPercentage ? ` - ${maxPercentage}%` : ''}`}</span>
+                <button
+                    onClick={() => removeIntensity(blockId, sessionId, exerciseId, intensityId)}
+                    className="duration:100 transition-colors hover:text-error cursor-pointer"
+                >
+                    <Trash />
+                </button>
+
             </header>
             <div className="flex justify-around px-3">
                 <FieldsetText
@@ -159,8 +170,8 @@ const Intensity: FC<Props> = ({
                         if (isEditing) {
                             setIsEditing(false)
 
-                            initSeries !== series && setSessionExerciseIntensitySeries(sessionId, exerciseId, intensityId, series);
-                            initRepetitions !== repetitions && setSessionExerciseIntensityRepetitions(sessionId, exerciseId, intensityId, repetitions);
+                            initSeries !== series && setIntensitySeries(blockId, sessionId, exerciseId, intensityId, series);
+                            initRepetitions !== repetitions && setIntensityReps(blockId, sessionId, exerciseId, intensityId, repetitions);
                         } else {
                             toggleIsEditing()
                         }
@@ -169,13 +180,14 @@ const Intensity: FC<Props> = ({
                     </button>
                 </div>
             </div>
-            {sets.map(({ id_set, percentage }) => (
+            {sets.map(({ id_set, percentage }, idx) => (
                 <Set
-                    key={id_set}
-                    id={id_set}
+                    key={`set-${id_set}-${idx}`}
+                    id={id_set!}
+                    blockId={blockId}
                     sessionId={sessionId}
                     exerciseId={exerciseId}
-                    intensityId={intensityId}
+                    intensityId={intensityId!}
                     percentage={percentage}
                     weight={weightRef}
                 />

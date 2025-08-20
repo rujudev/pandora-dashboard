@@ -1,6 +1,8 @@
 import { FC, useState } from "react";
 import { useDialog } from "../../hooks/useDialog";
-import { IntensityWithSeriesRepetitionsZoneAndSets, Set } from "../../interfaces/interfaces_compuestas.interface";
+import { IntensityWithSeriesRepetitionsZoneAndSets } from "../../interfaces/intensity/intensity-with-series-repetitions-zone-and-sets.interface";
+import { Set } from "../../interfaces/intensity/set.interface";
+import Button from "../Button";
 import Card from "../card/Card";
 import CardBody from "../card/CardBody";
 import { FieldsetSelect, FieldsetText } from "../fieldset";
@@ -41,7 +43,6 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
     const canUpdate = isComplete && hasChanges;
     const isEditing = mode === 'edit';
 
-    console.log(intensityState.zone, zoneColor[intensityState.zone])
     const columns: Column[] = [
         {
             field: 'selection', render: () => (
@@ -97,7 +98,8 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
                         ...Array.from({ length: prevIntensity.series - prevIntensity.sets.length }).fill(null).map((_, i) => ({
                             id_set: prevIntensity.sets.length + i,
                             percentage: 0,
-                            weight: 0
+                            weight: 0,
+                            is_new: true
                         }))
                     ]
             }
@@ -175,7 +177,7 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
                 </div>
             </div>
             <div className="flex justify-end gap-5">
-                <button
+                <Button
                     className="flex btn btn-secondary gap-2"
                     command="close"
                     commandfor={modalId}
@@ -184,15 +186,15 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
                     }}
                 >
                     Cancelar
-                </button>
-                <button
+                </Button>
+                <Button
                     className="flex btn gap-2 btn-warning"
                     onClick={onHandleUpdate}
                     disabled={!canUpdate}
                 >
                     Actualizar intensidad
-                </button>
-                <button
+                </Button>
+                <Button
                     command="close"
                     commandfor={modalId}
                     className="flex btn gap-2 btn-primary"
@@ -203,7 +205,7 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
                     disabled={!intensityState.sets.every(set => set.percentage !== 0)}
                 >
                     Guardar intensidad
-                </button>
+                </Button>
             </div>
         </div >
     )
