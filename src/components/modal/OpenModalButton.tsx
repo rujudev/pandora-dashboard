@@ -1,11 +1,12 @@
 import { JSX, ReactNode } from "react";
 import { useDialog } from "../../hooks/useDialog";
 
-const OpenModalButton = ({ buttonIcon, buttonText, modalId, modalContent, classes }: {
+const OpenModalButton = ({ buttonIcon, buttonText, modalId, modalContent, classes, disabled = false }: {
     buttonIcon?: ReactNode,
     buttonText?: string,
     modalId: string,
     modalContent: JSX.Element,
+    disabled?: boolean,
     classes?: string
 }) => {
     const { setDialog } = useDialog();
@@ -16,6 +17,7 @@ const OpenModalButton = ({ buttonIcon, buttonText, modalId, modalContent, classe
             command="show-modal"
             commandfor={modalId}
             onClick={() => setDialog({ id: modalId, content: modalContent })}
+            {...disabled && { disabled }}
         >
             {buttonIcon}
             {buttonText}
