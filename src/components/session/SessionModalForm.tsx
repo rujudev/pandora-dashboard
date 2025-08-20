@@ -1,7 +1,13 @@
-import { FC, useState } from "react"
+import { getDay } from "date-fns"
+import { ChangeEvent, FC, useEffect, useState } from "react"
+import { useAthleteTraining } from "../../hooks/useAthleteTraining"
 import { useDialog } from "../../hooks/useDialog"
-import { ExerciseWithIntensity, MovementsWithWeightRef, SessionWithExercisesAndIntensities } from "../../interfaces/interfaces_compuestas.interface"
-import { DayPeriod, DayWeek } from "../../types/day.types"
+import { ExerciseWithIntensity } from "../../interfaces/exercise/exercise-with-intensity.interface"
+import { MuscleMovementWithWeightRef } from "../../interfaces/movement/muscle-movement-weight.interface"
+import { SessionWithExercisesAndIntensities } from "../../interfaces/session/session-with-exercises-and-intensities.interface"
+import { DAY_PERIODS, DayPeriod, DAYS_OF_WEEK, DayWeek } from "../../types/day.types"
+import { dayPeriodToNumber, dayWeekToNumber, numberToDayPeriod, numberToDayWeek } from "../../utils/date"
+import Button from "../Button"
 import { Plus, Remove, TrainingPageIcon, ViewTraining } from "../Icon"
 import Card from "../card/Card"
 import CardBody from "../card/CardBody"
@@ -12,10 +18,13 @@ import OpenModalButton from "../modal/OpenModalButton"
 import { Tab } from "../tab/Tab"
 import { Tabs } from "../tab/Tabs"
 import Table, { Column } from "../table/Table"
+import { selectedBlockDayType } from "./Sessions"
+
+// TODO: hay que refactorizar el componente para que esté sincronizado con el reducer y que no se use el estado local para los ejercicios
 
 interface SessionExerciseTableProps {
     exercises: ExerciseWithIntensity[],
-    muscleMovements: MovementsWithWeightRef[],
+    muscleMovements: MuscleMovementWithWeightRef[],
     onUpdate: (exercise: ExerciseWithIntensity) => void
 }
 const SessionExercisesTable: FC<SessionExerciseTableProps> = ({ exercises, muscleMovements, onUpdate }) => {
@@ -84,50 +93,50 @@ const SessionExercisesTable: FC<SessionExerciseTableProps> = ({ exercises, muscl
 }
 
 type SessionMetadata = {
-    selectedDay: DayWeek | string,
-    selectedPeriod: DayPeriod | string,
+    periods: DayPeriod[],
+    selectedDay: DayWeek,
+    selectedPeriod: DayPeriod | null,
     note: string
 }
+
 interface SessionMetadataProps {
     metadata: SessionMetadata,
-    onChange: (key: keyof SessionMetadata, value: string | DayWeek | DayPeriod) => void
+    onChangeNote: (e: ChangeEvent<HTMLTextAreaElement>) => void,
+    onSelectPeriod: (e: ChangeEvent<HTMLSelectElement>) => void,
 }
-const SessionMetadataForm: FC<SessionMetadataProps> = ({ metadata, onChange }) => {
-    const { selectedDay, selectedPeriod, note } = metadata;
+const SessionMetadataForm: FC<SessionMetadataProps> = ({ metadata, onChangeNote, onSelectPeriod }) => {
+    const { selectedDay, selectedPeriod, periods, note } = metadata;
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="flex bg-base-100 gap-5 p-6 rounded-xl">
+            <div className="grid grid-cols-2 bg-base-100 gap-5 p-6 rounded-xl">
                 <FieldsetSelect
                     legend="Día"
                     placeholder="Selecciona un día de la semana"
-                    value={selectedDay}
-                    options={['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map(option => ({ id: option, option }))}
-                    onChange={(e) => {
-                        const newSelectedDay = e.target.value as DayWeek;
-                        onChange('selectedDay', newSelectedDay)
-                    }}
+                    value={dayWeekToNumber(selectedDay) ?? 'null'}
+                    options={DAYS_OF_WEEK.map(option => {
+                        return { id: dayWeekToNumber(option), option }
+                    })}
                     required
+                    disabled
                 />
                 <FieldsetSelect
                     legend="Tipo día"
-                    placeholder="Selecciona una modalidad de día"
-                    value={selectedPeriod}
-                    options={['Mañana', 'Tarde'].map(option => ({ id: option, option }))}
-                    onChange={(e) => {
-                        const newSelectedPeriod = e.target.value as DayPeriod;
-                        onChange('selectedPeriod', newSelectedPeriod);
-                    }}
+                    placeholder="Selecciona un periodo"
+                    value={selectedPeriod ? dayPeriodToNumber(selectedPeriod) : 'null'}
+                    options={DAY_PERIODS.map(option => ({
+                        id: dayPeriodToNumber(option),
+                        option,
+                        disabled: periods.some(period => dayPeriodToNumber(period) === dayPeriodToNumber(option))
+                    }))}
+                    onChange={onSelectPeriod}
                     required
                 />
             </div>
             <div className="bg-base-100 gap-5 p-6 rounded-xl">
                 <FieldsetTextarea
                     value={note}
-                    onChange={(e) => {
-                        const newNote = e.target.value;
-                        onChange('note', newNote)
-                    }}
+                    onChange={onChangeNote}
                     isOptional
                 />
             </div>
@@ -136,24 +145,41 @@ const SessionMetadataForm: FC<SessionMetadataProps> = ({ metadata, onChange }) =
 }
 
 interface SessionModalFormProps {
-    muscleMovements: MovementsWithWeightRef[],
-    onAddSession: (session: SessionWithExercisesAndIntensities) => void
+    block: selectedBlockDayType,
+    trainingId: number,
+    muscleMovements: MuscleMovementWithWeightRef[],
+    onAddSession: (session: SessionWithExercisesAndIntensities) => void,
 }
-const SessionModalForm: FC<SessionModalFormProps> = ({ muscleMovements, onAddSession }) => {
+const SessionModalForm: FC<SessionModalFormProps> = ({ block, trainingId, muscleMovements, onAddSession }) => {
     const { closeDialog } = useDialog();
-    const [sessionExercises, setSessionExercises] = useState<ExerciseWithIntensity[]>([])
+    const { addExercise } = useAthleteTraining();
+    const [exercises, setExercises] = useState<ExerciseWithIntensity[]>([])
     const [sessionMetadata, setSessionMetadata] = useState<SessionMetadata>({
-        selectedDay: 'null',
-        selectedPeriod: 'null',
+        periods: [],
+        selectedDay: 'Lunes',
+        selectedPeriod: null,
         note: ''
     });
 
+    const isSameWeekDay = (day: DayWeek, weekDay: Date) => getDay(weekDay) === dayWeekToNumber(day);
+
+    useEffect(() => {
+        setSessionMetadata({
+            ...sessionMetadata,
+            selectedDay: numberToDayWeek(getDay(block.date)),
+            periods: block.sessions
+                .filter(session => isSameWeekDay(session.day_week, block.date))
+                .map(session => session.day_period),
+            selectedPeriod: null
+        })
+    }, [block])
+
     const handleAddExercise = (newExercise: ExerciseWithIntensity) => {
-        setSessionExercises((prevExercises: ExerciseWithIntensity[]) => [...prevExercises, newExercise])
+        setExercises((prevExercises: ExerciseWithIntensity[]) => [...prevExercises, { ...newExercise, id_exercise: prevExercises.length + 1, is_new: true }])
     }
 
     const handleUpdateExercise = (exercise: ExerciseWithIntensity) => {
-        setSessionExercises(prevExercises => prevExercises.map(prevExercise => {
+        setExercises(prevExercises => prevExercises.map(prevExercise => {
             if (prevExercise.id_exercise !== exercise.id_exercise) return prevExercise
 
             return {
@@ -163,10 +189,21 @@ const SessionModalForm: FC<SessionModalFormProps> = ({ muscleMovements, onAddSes
         }))
     }
 
-    const handleChangeMetadata = (key: keyof SessionMetadata, value: string | DayWeek | DayPeriod) => {
+    const handleChangeNote = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        const value = e.target.value;
+
         setSessionMetadata(prevSessionMetadata => ({
             ...prevSessionMetadata,
-            [key]: value
+            note: value
+        }))
+    }
+
+    const handleChangePeriod = (e: ChangeEvent<HTMLSelectElement>) => {
+        const value = Number(e.target.value);
+
+        setSessionMetadata(prevSessionMetadata => ({
+            ...prevSessionMetadata,
+            selectedPeriod: numberToDayPeriod(value)
         }))
     }
 
@@ -179,13 +216,14 @@ const SessionModalForm: FC<SessionModalFormProps> = ({ muscleMovements, onAddSes
                     content={
                         <SessionMetadataForm
                             metadata={sessionMetadata}
-                            onChange={handleChangeMetadata}
+                            onSelectPeriod={handleChangePeriod}
+                            onChangeNote={handleChangeNote}
                         />
                     }
                     defaultSelected
                 />
                 <Tab
-                    label={`Ejercicios (${sessionExercises.length})`}
+                    label={`Ejercicios (${exercises.length})`}
                     name="session_tab"
                     content={
                         <div className="flex flex-col w-full gap-4">
@@ -193,10 +231,11 @@ const SessionModalForm: FC<SessionModalFormProps> = ({ muscleMovements, onAddSes
                                 <h2 className="text-xl font-semibold">Ejercicios</h2>
                                 <OpenModalButton
                                     buttonIcon={<Plus />}
-                                    buttonText="Nuevo ejercicio"
+                                    buttonText="Añadir ejercicio"
                                     modalContent={
                                         <ExerciseModalForm
                                             modalId="add-session-exercise"
+                                            existingSessionExercises={exercises}
                                             muscleMovements={muscleMovements}
                                             onSave={handleAddExercise}
                                         />
@@ -204,8 +243,8 @@ const SessionModalForm: FC<SessionModalFormProps> = ({ muscleMovements, onAddSes
                                     modalId="add-session-exercise"
                                 />
                             </div>
-                            {sessionExercises.length > 0
-                                ? <SessionExercisesTable exercises={sessionExercises} muscleMovements={muscleMovements} onUpdate={handleUpdateExercise} />
+                            {exercises.length > 0
+                                ? <SessionExercisesTable exercises={exercises} muscleMovements={muscleMovements} onUpdate={handleUpdateExercise} />
                                 : (
                                     <Card>
                                         <CardBody classes="flex flex-col items-center gap-3">
@@ -220,7 +259,7 @@ const SessionModalForm: FC<SessionModalFormProps> = ({ muscleMovements, onAddSes
                 />
             </Tabs>
             <div className="flex justify-end gap-5">
-                <button
+                <Button
                     className="flex btn btn-secondary gap-2"
                     command="close"
                     commandfor="add-session"
@@ -229,28 +268,30 @@ const SessionModalForm: FC<SessionModalFormProps> = ({ muscleMovements, onAddSes
                     }}
                 >
                     Cancelar
-                </button>
-                <button
+                </Button>
+                <Button
                     command="close"
                     commandfor="add-session"
                     className="flex btn btn-primary gap-2"
                     onClick={() => {
-                        const { selectedDay, selectedPeriod, note } = sessionMetadata;
+                        const { selectedDay, selectedPeriod } = sessionMetadata;
 
-                        onAddSession({
-                            day_week: selectedDay as DayWeek,
-                            exercises: sessionExercises,
-                            day_period: selectedPeriod as DayPeriod,
-                            id_session: 33,
-                            id_training: 1
-                        })
+                        selectedPeriod &&
+                            onAddSession({
+                                day_period: selectedPeriod,
+                                day_week: selectedDay,
+                                exercises: exercises,
+                                is_new: true
+                            })
+
                         closeDialog('add-session')
                     }}
+                    disabled={!sessionMetadata.selectedPeriod}
                 >
                     Guardar sesión
-                </button>
+                </Button>
             </div>
-        </div>
+        </div >
     )
 }
 
