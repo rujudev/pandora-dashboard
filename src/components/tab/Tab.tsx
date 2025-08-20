@@ -13,7 +13,15 @@ interface Props {
 export const Tab: FC<Props> = ({ tabRef, name, label, content, defaultSelected = false, onTabSelected }) => {
     return (
         <>
-            <input ref={tabRef} type="radio" name={name} className="tab" aria-label={label} onChange={onTabSelected} defaultChecked={defaultSelected} />
+            <input
+                ref={tabRef}
+                type="radio"
+                name={name}
+                className="tab"
+                aria-label={label}
+                onChange={onTabSelected}
+                defaultChecked={defaultSelected}
+            />
             <TabContent classes="pl-4 pr-4 pb-4 gap-5">{content}</TabContent>
         </>
     )
