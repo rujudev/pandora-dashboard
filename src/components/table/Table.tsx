@@ -62,7 +62,7 @@ const Table = <T extends Record<string, any> = Record<string, any>>({ rows, colu
                 {!disableTHead && (
                     <thead>
                         <tr>
-                            {mappedColumns.map(({ field, width, render, headerName = '' }) => {
+                            {mappedColumns.map(({ field, headerName = '' }) => {
                                 const isSelectionCol = field === 'selection';
                                 const isActionCol = field === 'actions';
 
@@ -70,14 +70,14 @@ const Table = <T extends Record<string, any> = Record<string, any>>({ rows, colu
 
                                 if (isSelectionCol || isActionCol) {
                                     return (
-                                        <th {...(isActionCol && { className: 'text-right' })}>
+                                        <th key={`th-field-${field}`} {...(isActionCol && { className: 'text-right' })}>
                                             {headerName}
                                         </th>
                                     )
                                 }
 
                                 return (
-                                    <th {...(thClasses && { className: thClasses })}>{headerName}</th>
+                                    <th key={`th-field-${field}`} {...(thClasses && { className: thClasses })}>{headerName}</th>
                                 )
                             })}
                         </tr>
@@ -88,7 +88,7 @@ const Table = <T extends Record<string, any> = Record<string, any>>({ rows, colu
                         rows.map((row, rowIndex) => (
                             <tr key={rowIndex}>
                                 {
-                                    mappedColumns.map(({ field, render, width }, colIndex) => {
+                                    mappedColumns.map(({ field, render }, colIndex) => {
                                         const isSelectionCol = field === 'selection';
                                         const isActionCol = field === 'actions';
 
@@ -96,7 +96,7 @@ const Table = <T extends Record<string, any> = Record<string, any>>({ rows, colu
 
                                         if ((isSelectionCol || isActionCol) && render) {
                                             return (
-                                                <td className={`${isActionCol ? `align-middle text-right` : ''}`}>
+                                                <td key={`td-field-${field}`} className={`${isActionCol ? `align-middle text-right` : ''}`}>
                                                     {isActionCol ? (
                                                         <div className="flex justify-end">
                                                             {render(row)}
