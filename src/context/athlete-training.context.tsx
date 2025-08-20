@@ -1,37 +1,34 @@
 import { ActionDispatch, createContext, ReactElement, useReducer } from "react";
-import { useLoaderData } from "react-router";
 import AthleteTraining from "../components/athlete/AthleteTraining";
-import { FullTrainingPlan } from "../interfaces/interfaces_compuestas.interface";
-import { LoaderData } from "../interfaces/loader-data.interface";
+import { Athlete } from "../interfaces/athlete/athlete.interface";
+import { FullTrainingPlan } from "../interfaces/training/full-training-plan.interface";
 import { athleteTrainingReducer, initialAthleteTrainingState } from "../reducer/athlete-training.reducer";
 import { AthleteTrainingAction } from "../types/reducer/athlete-training-reducer-action";
 
 interface AthleteTrainingContextProps {
-    state: FullTrainingPlan,
+    state: FullTrainingPlan & Partial<Athlete> | null,
     dispatch: ActionDispatch<[action: AthleteTrainingAction]>
 }
 
 export const AthleteTrainingContext = createContext<AthleteTrainingContextProps>({ state: initialAthleteTrainingState, dispatch: () => null })
 
-export const AthleteTrainingProvider = ({ initialTraining = initialAthleteTrainingState, children }: {
-    initialTraining: FullTrainingPlan | undefined,
+export const AthleteTrainingProvider = ({ initialTraining, children }: {
+    initialTraining: FullTrainingPlan & Partial<Athlete> | null,
     children: ReactElement
 }) => {
     const [state, dispatch] = useReducer(athleteTrainingReducer, initialTraining)
 
     return (
-        <AthleteTrainingContext.Provider value={{ state, dispatch }}>
+        <AthleteTrainingContext value={{ state, dispatch }}>
             {children}
-        </AthleteTrainingContext.Provider>
+        </AthleteTrainingContext>
     )
 }
 
-export const AthleteTrainingContextWrapper = () => {
-    const { training } = useLoaderData() as LoaderData;
-
+export const AthleteTrainingContextWrapper = ({ mode }: { mode: 'edit' | 'create' }) => {
     return (
-        <AthleteTrainingProvider initialTraining={training}>
-            <AthleteTraining />
+        <AthleteTrainingProvider initialTraining={null}>
+            <AthleteTraining mode={mode} />
         </AthleteTrainingProvider>
     )
 }

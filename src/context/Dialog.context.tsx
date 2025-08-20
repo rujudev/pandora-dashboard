@@ -5,7 +5,7 @@ interface DialogData {
     content: ReactNode
 }
 
-interface DialogContextType {
+export interface DialogContextType {
     stack: DialogData[]
     setDialog: (dialog: DialogData) => void
     closeDialog: (dialogId: string) => void
@@ -18,7 +18,11 @@ export const DialogProvider = ({ children }: {
     const [stack, setStack] = useState<DialogData[]>([]);
 
     const setDialog = (newDialog: DialogData) => {
-        setStack((prevDialogs: DialogData[]) => [...prevDialogs, newDialog])
+        setStack((prevDialogs: DialogData[]) =>
+            prevDialogs.some(dialog => dialog.id === newDialog.id)
+                ? prevDialogs
+                : [...prevDialogs, newDialog]
+        )
     }
 
     const closeDialog = (dialogId: string) => {
