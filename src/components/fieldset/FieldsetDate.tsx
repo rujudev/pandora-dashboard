@@ -1,6 +1,7 @@
 import { autoUpdate, flip, offset, useFloating } from "@floating-ui/react-dom";
 import { FC, useEffect, useState } from "react";
-import { DayPicker, DayPickerProps, getDefaultClassNames, PropsMulti, PropsRange, PropsSingle } from 'react-day-picker';
+import { DayPicker, DayPickerProps, getDefaultClassNames, Matcher, PropsMulti, PropsRange, PropsSingle } from 'react-day-picker';
+import { es } from 'react-day-picker/locale';
 import { Calendar } from "../Icon";
 
 import 'react-day-picker/dist/style.css';
@@ -15,13 +16,14 @@ type CustomProps = {
     full?: boolean;
     anchor?: string;
     id?: string;
+    isFieldDisabled?: boolean;
 }
 
 type Props = (PropsSingle | PropsRange | PropsMulti) & DayPickerProps & CustomProps;
 
 export const FieldsetDate: FC<Props> = (props) => {
     const defaultClassNames = getDefaultClassNames();
-    const { id = '', legend = '', label = '', placeholder = '', full = true, selected } = props;
+    const { id = '', legend = '', label = '', placeholder = '', full = true, selected, disabled, isFieldDisabled } = props;
     const [open, setOpen] = useState(false);
     const { refs: { reference, setReference, setFloating }, floatingStyles } = useFloating({
         placement: 'bottom-start',
@@ -31,6 +33,12 @@ export const FieldsetDate: FC<Props> = (props) => {
         middleware: [offset(5), flip()]
     });
     const [selectedDate, setSelectedDate] = useState<any>(null);
+    const disabledMatchers = [...normalizeMatchers(disabled)];
+
+    function normalizeMatchers(value: Matcher | Matcher[] | undefined): Matcher[] {
+        if (!value) return [];
+        return Array.isArray(value) ? value : [value];
+    }
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -55,7 +63,7 @@ export const FieldsetDate: FC<Props> = (props) => {
 
     return (
         <>
-            <fieldset className="fieldset relative">
+            <fieldset className="fieldset relative" disabled={isFieldDisabled}>
                 <legend className="fieldset-legend">{legend}</legend>
                 <button
                     id={id}
@@ -73,9 +81,11 @@ export const FieldsetDate: FC<Props> = (props) => {
                         <CardBody>
                             <DayPicker
                                 {...props}
+                                locale={es}
                                 selected={selectedDate}
                                 required={false}
-                                disabled={{ before: new Date() }}
+                                disabled={disabledMatchers}
+                                onDayClick={() => setOpen(!open)}
                                 classNames={{
                                     today: 'text-info',
                                     selected: `${defaultClassNames.selected} text-primary-content`,

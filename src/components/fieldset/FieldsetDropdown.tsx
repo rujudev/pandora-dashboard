@@ -1,6 +1,6 @@
 import { autoUpdate, flip, offset, useFloating } from "@floating-ui/react-dom";
 import { FC, useEffect, useState } from "react";
-import { Check, ChevronDown } from "../Icon";
+import { Check, ChevronLeft } from "../Icon";
 
 type Props = {
     legend?: string;
@@ -41,7 +41,7 @@ export const FieldsetDropdown: FC<Props> = ({ legend, options, label, placeholde
             <div className="relative dropdown" ref={setReference}>
                 <button tabIndex={0} type="button" className="flex justify-between input input-border text-base-content opacity-[0.5] w-full transform-none transition-none cursor-pointer">
                     {placeholder}
-                    <ChevronDown />
+                    <ChevronLeft />
                 </button>
                 <ul tabIndex={0} className="list bg-base-100 border rounded-sm shadow-xl rounded-box dropdown-content menu z-1 w-full p-0" ref={setFloating} style={{ ...floatingStyles }}>
                     {options?.map((option, index) => (

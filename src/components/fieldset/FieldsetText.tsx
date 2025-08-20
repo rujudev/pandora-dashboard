@@ -11,12 +11,26 @@ type Props = {
     readOnly?: boolean,
     classes?: string,
     inputClasses?: string,
+    isFieldDisabled?: boolean,
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void | undefined
 }
 
-export const FieldsetText: FC<Props> = ({ id = '', legend = '', placeholder = '', value = undefined, defaultValue = undefined, label = '', classes = '', inputClasses = '', full = true, readOnly = false, onChange }) => {
+export const FieldsetText: FC<Props> = ({
+    id = '',
+    legend = '',
+    placeholder = '',
+    value = undefined,
+    defaultValue = undefined,
+    label = '',
+    classes = '',
+    inputClasses = '',
+    full = true,
+    readOnly = false,
+    isFieldDisabled = false,
+    onChange
+}) => {
     return (
-        <fieldset className={`fieldset${classes ? ` ${classes}` : ''}`}>
+        <fieldset className={`fieldset${classes ? ` ${classes}` : ''}`} disabled={isFieldDisabled}>
             {legend && (
                 <legend className="fieldset-legend">{legend}</legend>
             )}
