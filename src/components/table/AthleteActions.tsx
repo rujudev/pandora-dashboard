@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
-import { Athlete } from "../../interfaces/athlete.interface"
+import { Athlete } from "../../interfaces/athlete/athlete.interface"
 import { getAthleteTrainings } from "../../services/trainings"
 import { EditUser, Remove, ViewTraining } from "../Icon"
 
