@@ -1,5 +1,5 @@
+import { AthleteTrainingSummary } from "./athlete/athlete-training-summary.interface"
 import { Athlete } from "./athlete/athlete.interface"
-import { AthleteTrainingSummary } from "./interfaces_compuestas.interface"
 import { FullTrainingPlan } from "./training/full-training-plan.interface"
 
 export type LoaderData = {
