@@ -1,5 +1,5 @@
 export interface Training {
-    id_training: number;
+    id_training?: number;
     start_date: string;
     end_date: string;
     period: string;

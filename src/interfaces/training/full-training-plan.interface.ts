@@ -1,9 +1,9 @@
-import { MovementsWithWeightRef } from "../interfaces_compuestas.interface";
-import { SessionWithExercisesAndIntensities } from "../session/session-with-exercises-and-intensities.interface";
+import { MuscleMovementWithWeightRef } from "../movement/muscle-movement-weight.interface";
+import { WeeklyBlock } from "../session/weekly-blocks.interface";
 import { Training } from "./training.interface";
 
 export interface FullTrainingPlan extends Training {
     id_athlete: number;
-    muscle_movements: MovementsWithWeightRef[];
-    sessions: SessionWithExercisesAndIntensities[];
+    muscle_movements: MuscleMovementWithWeightRef[];
+    weekly_blocks: WeeklyBlock[];
 }
