@@ -5,7 +5,7 @@ import HeaderPage from "../components/headerPage/HeaderPage";
 import { Plus } from "../components/Icon";
 import AthleteActions from "../components/table/AthleteActions";
 import Table, { Column } from "../components/table/Table";
-import { useBreadcrumbs } from "../context/breadcrumb.context";
+import { useBreadcrumbs } from "../context/Breadcrumbs.context";
 import { initHeaderPage } from "../context/header-page.context";
 import { useHeaderPage } from "../hooks/useHeaderPage";
 import { Athlete } from "../interfaces/athlete/athlete.interface";
@@ -64,7 +64,7 @@ const Athletes = () => {
 
     useEffect(() => {
         setCrumbs([
-            { label: 'Atletas', path: '/athletes', isLast: true },
+            { label: 'Atletas', path: '/athletes' },
         ])
 
         isAthletesPage &&

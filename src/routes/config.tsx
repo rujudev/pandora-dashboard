@@ -4,7 +4,7 @@ import AthleteComponent from "../components/athlete/Athlete.tsx";
 import AthleteTrainingsHistory from "../components/athlete/AthleteTrainingsHistory.tsx";
 import { AddTraining, AthletePageIcon, DashboardPageIcon, TrainingPageIcon } from "../components/Icon.tsx";
 import { AthleteTrainingContextWrapper } from "../context/athlete-training.context.tsx";
-import { BreadcrumbProvider } from "../context/breadcrumb.context.tsx";
+import { BreadcrumbsProvider } from "../context/Breadcrumbs.context.tsx";
 import ButtonStateProvider from "../context/button-state.context.tsx";
 import Athletes from "../pages/Athletes.tsx";
 import ExercisesPage from "../pages/Exercises.tsx";
@@ -135,9 +135,9 @@ export const routes = [
 export const router = createBrowserRouter([
   {
     element: (
-      <BreadcrumbProvider>
+      <BreadcrumbsProvider>
         <App />
-      </BreadcrumbProvider>
+      </BreadcrumbsProvider>
     ),
     children: routes.map(({ path, element, loader, handle, children = [] }) => ({
       path,

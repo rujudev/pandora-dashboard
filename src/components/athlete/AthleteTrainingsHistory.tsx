@@ -2,7 +2,7 @@ import { format, isAfter, isBefore, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import { ReactNode, useEffect, useState } from "react";
 import { Link, Outlet, useLoaderData, useMatch } from "react-router";
-import { useBreadcrumbs } from "../../context/breadcrumb.context";
+import { useBreadcrumbs } from "../../context/Breadcrumbs.context";
 import { initHeaderPage } from "../../context/header-page.context";
 import { useHeaderPage } from "../../hooks/useHeaderPage";
 import { AthleteTrainingSummary } from "../../interfaces/athlete/athlete-training-summary.interface";
@@ -173,13 +173,13 @@ const AthleteTrainingsHistory = () => {
     }, [athleteId, isAthleteTrainingsPage])
 
     useEffect(() => {
-        setCrumbs([
-            { label: 'Atletas', path: '/athletes' },
-            { label: `${athlete?.first_name} ${athlete?.last_name}`, isLast: false },
-            { label: `Entrenamientos`, path: `/athletes/${athlete?.id_athlete}/trainings`, isLast: true },
-        ])
+        if (athlete && isAthleteTrainingsPage) {
+            setCrumbs([
+                { label: 'Atletas', path: '/athletes' },
+                { label: `${athlete?.first_name} ${athlete?.last_name}` },
+                { label: `Entrenamientos`, path: ROUTE.ATHLETE_TRAININGS(athleteId) },
+            ])
 
-        athlete && isAthleteTrainingsPage &&
             setHeaderConfig({
                 isLoadingPage: false,
                 backButton: <BackButton path={ROUTE.ATHLETES} />,
@@ -190,6 +190,7 @@ const AthleteTrainingsHistory = () => {
                     </>
                 ),
             })
+        }
     }, [athlete, isAthleteTrainingsPage])
 
     return (

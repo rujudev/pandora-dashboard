@@ -7,7 +7,7 @@ import CardHeader from "../components/card/CardHeader";
 import ExerciseInfo from "../components/exercise/ExerciseInfo";
 import HeaderPage from "../components/headerPage/HeaderPage";
 import { Edit, Plus, Save, Trash } from "../components/Icon";
-import { useBreadcrumbs } from "../context/breadcrumb.context";
+import { useBreadcrumbs } from "../context/Breadcrumbs.context";
 import { initHeaderPage } from "../context/header-page.context";
 import { useToast } from "../context/toast.context";
 import { useHeaderPage } from "../hooks/useHeaderPage";

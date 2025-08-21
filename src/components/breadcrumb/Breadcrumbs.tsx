@@ -1,4 +1,4 @@
-import { Crumb, useBreadcrumbs } from "../../context/breadcrumb.context";
+import { Crumb, useBreadcrumbs } from "../../context/Breadcrumbs.context";
 import Breadcrumb from "./Breadcrumb";
 
 const Breadcrumbs = () => {

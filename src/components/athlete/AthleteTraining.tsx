@@ -2,7 +2,7 @@ import { format, isBefore, isEqual, isSameDay, parseISO } from "date-fns";
 import _ from "lodash";
 import { FC, useEffect, useState } from "react";
 import { useLoaderData, useMatch } from "react-router";
-import { useBreadcrumbs } from "../../context/breadcrumb.context";
+import { useBreadcrumbs } from "../../context/Breadcrumbs.context";
 import { useToast } from "../../context/toast.context";
 import { useAthleteTraining } from "../../hooks/useAthleteTraining";
 import { useHeaderPage } from "../../hooks/useHeaderPage";
@@ -82,7 +82,6 @@ const AthleteTraining: FC<AthleteTrainingProps> = ({ mode = 'edit' }) => {
     }
 
     useEffect(() => {
-        setCrumbs(4)
         state && setStateAux(_.cloneDeep(state))
     }, [])
 
@@ -98,11 +97,11 @@ const AthleteTraining: FC<AthleteTrainingProps> = ({ mode = 'edit' }) => {
             const formatterEndDate = format(endDate, 'dd MMMM yyyy');
 
             setCrumbs([
-                { label: 'Atletas', path: '/athletes' },
-                { label: `${state?.first_name} ${state?.last_name}`, isLast: false },
-                { label: `Entrenamientos`, path: `/athletes/${state.id_athlete}/trainings`, isLast: false },
-                { label: `${formatterStartDate} - ${formatterEndDate}`, isLast: true }
-            ])
+                { label: 'Atletas', path: ROUTE.ATHLETES },
+                { label: `${state.first_name} ${state.last_name}` },
+                { label: 'Entrenamientos', path: ROUTE.ATHLETE_TRAININGS(athleteId) },
+                { label: `${formatterStartDate} - ${formatterEndDate}` }
+            ]);
 
             setHeaderConfig({
                 isLoadingPage: false,
