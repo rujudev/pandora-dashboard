@@ -26,8 +26,8 @@ const Exercises: FC<Props> = ({
 }) => {
     const {
         state,
-        addExercise,
-        removeExercise,
+        addExerciseToSession,
+        removeExerciseFromSession,
         setExerciseName,
         setExerciseAbbr,
         setExerciseMovement,
@@ -47,7 +47,7 @@ const Exercises: FC<Props> = ({
                                 modalId="add-exercise"
                                 muscleMovements={state?.muscle_movements || []}
                                 onSave={(exercise) => {
-                                    addExercise(blockId, sessionId, exercise)
+                                    addExerciseToSession(blockId, sessionId, exercise)
                                 }}
                             />
                         }
@@ -62,13 +62,15 @@ const Exercises: FC<Props> = ({
                     weight_ref: 0
                 };
 
+                console.log()
+
                 return (
                     <Collapse
                         key={id_exercise}
                         id={id_exercise}
                         title={exercise_name}
                         name={exercise_name}
-                        onRemove={exerciseId => removeExercise(blockId, sessionId, exerciseId)}
+                        onRemove={exerciseId => removeExerciseFromSession(blockId, sessionId, exerciseId)}
                         isSubCollapse
                     >
                         <div className="grid grid-cols-2 gap-5 mb-5">

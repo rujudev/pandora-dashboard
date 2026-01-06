@@ -11,7 +11,7 @@ const Dialog = () => {
         <dialog
             key={currentDialog.id}
             id={currentDialog.id}
-            className={`modal w-dvw [scrollbar-gutter:auto] z-${stack.length + 999}`}>
+            className="modal w-dvw [scrollbar-gutter:auto]" style={{ zIndex: stack.length + 999 }}>
             <div className="modal-box max-w-4xl">
                 <Button
                     variant="ghost"

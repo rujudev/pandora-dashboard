@@ -1,6 +1,5 @@
 import { getDay } from "date-fns"
 import { ChangeEvent, FC, useEffect, useState } from "react"
-import { useAthleteTraining } from "../../hooks/useAthleteTraining"
 import { useDialog } from "../../hooks/useDialog"
 import { ExerciseWithIntensity } from "../../interfaces/exercise/exercise-with-intensity.interface"
 import { MuscleMovementWithWeightRef } from "../../interfaces/movement/muscle-movement-weight.interface"
@@ -16,9 +15,8 @@ import { FieldsetSelect } from "../fieldset"
 import FieldsetTextarea from "../fieldset/FieldsetTextarea"
 import OpenModalButton from "../modal/OpenModalButton"
 import { Tab } from "../tab/Tab"
-import { Tabs } from "../tab/Tabs"
+import { Tabs } from "../tab/TabsBox"
 import Table, { Column } from "../table/Table"
-import { selectedBlockDayType } from "./Sessions"
 
 // TODO: hay que refactorizar el componente para que esté sincronizado con el reducer y que no se use el estado local para los ejercicios
 
@@ -144,35 +142,21 @@ const SessionMetadataForm: FC<SessionMetadataProps> = ({ metadata, onChangeNote,
     )
 }
 
-interface SessionModalFormProps {
-    block: selectedBlockDayType,
-    trainingId: number,
+type SessionModalFormProps = {
+    existingSessionsForDay: SessionWithExercisesAndIntensities[],
+    blockDate: Date,
     muscleMovements: MuscleMovementWithWeightRef[],
     onAddSession: (session: SessionWithExercisesAndIntensities) => void,
 }
-const SessionModalForm: FC<SessionModalFormProps> = ({ block, trainingId, muscleMovements, onAddSession }) => {
+const SessionModalForm: FC<SessionModalFormProps> = ({ blockDate, existingSessionsForDay, muscleMovements, onAddSession }) => {
     const { closeDialog } = useDialog();
-    const { addExercise } = useAthleteTraining();
-    const [exercises, setExercises] = useState<ExerciseWithIntensity[]>([])
     const [sessionMetadata, setSessionMetadata] = useState<SessionMetadata>({
         periods: [],
         selectedDay: 'Lunes',
         selectedPeriod: null,
         note: ''
     });
-
-    const isSameWeekDay = (day: DayWeek, weekDay: Date) => getDay(weekDay) === dayWeekToNumber(day);
-
-    useEffect(() => {
-        setSessionMetadata({
-            ...sessionMetadata,
-            selectedDay: numberToDayWeek(getDay(block.date)),
-            periods: block.sessions
-                .filter(session => isSameWeekDay(session.day_week, block.date))
-                .map(session => session.day_period),
-            selectedPeriod: null
-        })
-    }, [block])
+    const [exercises, setExercises] = useState<ExerciseWithIntensity[]>([]);
 
     const handleAddExercise = (newExercise: ExerciseWithIntensity) => {
         setExercises((prevExercises: ExerciseWithIntensity[]) => [...prevExercises, { ...newExercise, id_exercise: prevExercises.length + 1, is_new: true }])
@@ -207,9 +191,21 @@ const SessionModalForm: FC<SessionModalFormProps> = ({ block, trainingId, muscle
         }))
     }
 
+    useEffect(() => {
+        const selectedDay = numberToDayWeek(getDay(blockDate));
+        const periods = existingSessionsForDay.map((session) => session.day_period);
+
+        setSessionMetadata((prev) => ({
+            ...prev,
+            selectedDay,
+            periods,
+            selectedPeriod: null,
+        }));
+    }, [blockDate, existingSessionsForDay]);
+
     return (
         <div className="flex flex-col gap-5">
-            <Tabs classes="tabs-box p-0 justify-center [&>input]:my-4">
+            <Tabs classes="p-0 justify-center [&>input]:my-4">
                 <Tab
                     label="Sesión"
                     name="session_tab"

@@ -6,7 +6,7 @@ import Button from "../Button";
 import Card from "../card/Card";
 import CardBody from "../card/CardBody";
 import { FieldsetSelect, FieldsetText } from "../fieldset";
-import { ChartLine } from "../Icon";
+import { ChartLine, Plus } from "../Icon";
 import Table, { Column } from "../table/Table";
 import { zoneColor } from "./Intensity";
 
@@ -33,14 +33,17 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
     const hasChanges =
         intensityState.zone !== lastUpdatedValues.zone ||
         intensityState.series !== lastUpdatedValues.series ||
-        intensityState.repetitions !== lastUpdatedValues.repetitions;
+        intensityState.repetitions !== lastUpdatedValues.repetitions ||
+        intensityState.sets.length !== lastUpdatedValues.sets.length ||
+        intensityState.sets.some((set, index) => set.percentage !== lastUpdatedValues.sets[index]?.percentage);
 
     const isComplete =
         intensityState.zone !== '' &&
         intensityState.series > 0 &&
-        intensityState.repetitions > 0;
+        intensityState.repetitions > 0 &&
+        intensityState.sets.length > 0 && intensityState.sets.every(set => set.percentage !== 0);
 
-    const canUpdate = isComplete && hasChanges;
+    const canSaveIntensity = isComplete && hasChanges;
     const isEditing = mode === 'edit';
 
     const columns: Column[] = [
@@ -87,25 +90,42 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
         },
     ];
 
-    const onHandleUpdate = () => {
-        setIntensityState(prevIntensity => {
-            return {
-                ...prevIntensity,
-                sets: prevIntensity.series < prevIntensity.sets.length
-                    ? prevIntensity.sets.slice(0, prevIntensity.series)
-                    : [
-                        ...prevIntensity.sets,
-                        ...Array.from({ length: prevIntensity.series - prevIntensity.sets.length }).fill(null).map((_, i) => ({
-                            id_set: prevIntensity.sets.length + i,
-                            percentage: 0,
-                            weight: 0,
-                            is_new: true
-                        }))
-                    ]
-            }
-        });
+    // const onHandleUpdate = () => {
+    //     setIntensityState(prevIntensity => {
+    //         return {
+    //             ...prevIntensity,
+    //             sets: prevIntensity.series < prevIntensity.sets.length
+    //                 ? prevIntensity.sets.slice(0, prevIntensity.series)
+    //                 : [
+    //                     ...prevIntensity.sets,
+    //                     ...Array.from({ length: prevIntensity.series - prevIntensity.sets.length }).fill(null).map((_, i) => ({
+    //                         id_set: prevIntensity.sets.length + i,
+    //                         percentage: 0,
+    //                         weight: 0,
+    //                         is_new: true
+    //                     }))
+    //                 ]
+    //         }
+    //     });
 
-        setLastUpdatedValues({ ...intensityState })
+    //     setLastUpdatedValues({ ...intensityState })
+    // }
+
+    function onAddSetToIntensity() {
+        setIntensityState(prevIntensity => ({
+            ...prevIntensity,
+            sets: [
+                ...prevIntensity.sets,
+                {
+                    id_set: prevIntensity.sets.length > 0
+                        ? Math.max(...prevIntensity.sets.map(set => set.id_set)) + 1
+                        : 1,
+                    percentage: 0,
+                    weight: 0,
+                    is_new: true
+                }
+            ]
+        }))
     }
 
     return (
@@ -156,17 +176,24 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
                             }}
                         />
                     </div>
-                    <div className="flex flex-col gap-5 col-span-2">
+                    <div className="flex flex-col gap-5 col-span-2 items-end">
+                        {/* Añade un botón de Añadir set, el cual se añadirá a la intensidad */}
+                        <Button
+                            className="w-fit flex btn gap-2 btn-primary"
+                            onClick={onAddSetToIntensity}
+                        >
+                            <Plus /> Añadir Set
+                        </Button>
                         {intensityState.sets.length > 0 ? (
                             <Table
-                                classes="max-h-95 overflow-y-auto rounded-box border border-base-content/5 bg-base-100"
+                                classes="max-h-95 w-full overflow-y-auto rounded-box border border-base-content/5 bg-base-100"
                                 columns={columns}
                                 rows={intensityState.sets}
                                 thClasses="text-center"
                                 tdClasses="text-center"
                             />
                         ) : (
-                            <Card>
+                            <Card classes="w-full">
                                 <CardBody classes="flex flex-col items-center gap-3">
                                     <ChartLine classes="size-8 text-base-content opacity-55" />
                                     <h2 className="text-base-content opacity-55">No hay sets creados</h2>
@@ -188,13 +215,6 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
                     Cancelar
                 </Button>
                 <Button
-                    className="flex btn gap-2 btn-warning"
-                    onClick={onHandleUpdate}
-                    disabled={!canUpdate}
-                >
-                    Actualizar intensidad
-                </Button>
-                <Button
                     command="close"
                     commandfor={modalId}
                     className="flex btn gap-2 btn-primary"
@@ -202,7 +222,7 @@ const IntensityModalForm: FC<Props> = ({ mode, intensity, modalId, weight, onSub
                         onSubmit(intensityState)
                         closeDialog(modalId || '')
                     }}
-                    disabled={!intensityState.sets.every(set => set.percentage !== 0)}
+                    disabled={!canSaveIntensity}
                 >
                     Guardar intensidad
                 </Button>

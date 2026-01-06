@@ -11,7 +11,6 @@ import { FullTrainingPlan } from "../../interfaces/training/full-training-plan.i
 import { ROUTE } from "../../routes/config";
 import { getAthlete } from "../../services/athletes";
 import { getTrainingByAthlete, updateAthleteTraining } from "../../services/trainings";
-import { getChangedFields } from "../../utils/object";
 import Button from "../Button";
 import Card from "../card/Card";
 import CardBody from "../card/CardBody";
@@ -59,18 +58,10 @@ const AthleteTraining: FC<AthleteTrainingProps> = ({ mode = 'edit' }) => {
 
     const handleUpdateAthleteTraining = async () => {
         if (state && stateAux) {
-            const updatedTrainingFields = getChangedFields(stateAux, state);
-
             setIsLoading(true);
 
             try {
-                await updateAthleteTraining(
-                    stateAux,
-                    updatedTrainingFields,
-                    (insertedFields) => {
-                        if (insertedFields.weekly_blocks) updateWeeklyBlocks(insertedFields.weekly_blocks);
-                    }
-                )
+                await updateAthleteTraining(state);
                 showToast({ type: 'success', message: 'El entrenamiento se ha actualizado correctamente!' })
             } catch (error) {
                 showToast({ type: 'error', message: `Se ha producido un error al actualizar el entrenamiento: ${error}` })

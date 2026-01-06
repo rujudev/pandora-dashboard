@@ -6,7 +6,7 @@ import { FullTrainingPlan } from '../interfaces/training/full-training-plan.inte
 
 export const getAthletes = async (): Promise<PostgrestSingleResponse<Athlete[]>> => {
     return await supabaseClient
-        .from('atleta')
+        .from('athlete')
         .select();
 }
 
@@ -38,7 +38,7 @@ export const addAthleteTraining = async (athleteTraining: FullTrainingPlan) => {
     const {
         error: insertAthleteTrainingError
     } = await supabaseClient
-        .from('atleta_training')
+        .from('athlete_training')
         .insert({
             id_athlete: athleteTraining.id_athlete,
             id_training: insertTrainingData.id_training

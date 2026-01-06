@@ -70,13 +70,35 @@ export const useAthleteTraining = () => {
         dispatch(createAction(ATHLETE_TRAINING_ACTION_TYPE.SESSION.SET.DAY_PERIOD, { blockId, sessionId, dayPeriod }))
     }
 
-    const addExercise = (blockId: number, sessionId: number, exercise: ExerciseWithIntensity) => {
-        dispatch(createAction(ATHLETE_TRAINING_ACTION_TYPE.EXERCISE.ADD, { blockId, sessionId, exercise }))
+    const addExerciseToSession = (blockId: number, sessionId: number, exercise: ExerciseWithIntensity) => {
+        dispatch(
+            createAction(
+                ATHLETE_TRAINING_ACTION_TYPE.EXERCISE.ADD,
+                { blockId, sessionId, exercise }
+            )
+        )
     }
 
-    const removeExercise = (blockId: number, sessionId: number, exerciseId: number) => {
-        dispatch(createAction(ATHLETE_TRAINING_ACTION_TYPE.EXERCISE.REMOVE, { blockId, sessionId, exerciseId }))
+    const removeExerciseFromSession = (blockId: number, sessionId: number, exerciseId: number) => {
+        dispatch(
+            createAction(
+                ATHLETE_TRAINING_ACTION_TYPE.EXERCISE.REMOVE,
+                { blockId, sessionId, exerciseId }
+            )
+        )
     }
+
+    const updateExerciseInSession = (
+        blockId: number,
+        sessionId: number,
+        exercise: ExerciseWithIntensity
+    ) => {
+        dispatch(
+            createAction(
+                ATHLETE_TRAINING_ACTION_TYPE.EXERCISE.UPDATE,
+                { blockId, sessionId, exercise })
+        )
+    };
 
     const setExerciseName = (blockId: number, sessionId: number, exerciseId: number, name: string) => {
         dispatch(createAction(ATHLETE_TRAINING_ACTION_TYPE.EXERCISE.SET.NAME, { blockId, sessionId, exerciseId, name }))
@@ -123,8 +145,9 @@ export const useAthleteTraining = () => {
         addSession,
         setSessionDayWeek,
         setSessionDayPeriod,
-        addExercise,
-        removeExercise,
+        addExerciseToSession,
+        updateExerciseInSession,
+        removeExerciseFromSession,
         setExerciseName,
         setExerciseAbbr,
         setExerciseMovement,

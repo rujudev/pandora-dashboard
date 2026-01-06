@@ -15,6 +15,8 @@ import { Exercise } from "../interfaces/exercise/exercise.interface";
 import { ROUTE } from "../routes/config";
 import { getExercises, saveExercises } from "../services/exercises";
 
+// TODO: hay que meter un skelleton hasta que carguen los datos
+
 export type ExerciseWithMeta = Exercise & { isEditing?: boolean, isNew?: boolean, isRemoved?: boolean }
 
 export const initExercise: Exercise = {
@@ -88,9 +90,9 @@ const ExercisesPage = () => {
     }
 
     useEffect(() => {
-        !isExercisesPage && setHeaderConfig(initHeaderPage)
+        setHeaderConfig(initHeaderPage)
         getExercisesDB()
-    }, [isExercisesPage])
+    }, [])
 
     useEffect(() => {
         setCrumbs([

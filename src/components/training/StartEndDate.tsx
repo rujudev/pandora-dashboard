@@ -1,6 +1,7 @@
-import { parseISO } from "date-fns"
-import { useAthleteTraining } from "../../hooks/useAthleteTraining"
-import { FieldsetDate } from "../fieldset"
+import { parseISO } from 'date-fns';
+import 'react-day-picker/style.css';
+import { useAthleteTraining } from "../../hooks/useAthleteTraining";
+import { FieldsetDate } from '../fieldset';
 
 const StartEndDateSkeleton = () => (
     <>
@@ -33,6 +34,7 @@ const StartEndDate = ({ classes, isTrainingCompleted = false }: { classes?: stri
                         ]}
                         showWeekNumber
                         isFieldDisabled={isTrainingCompleted}
+                        animate
                     />
                     <FieldsetDate
                         mode="single"
@@ -46,6 +48,7 @@ const StartEndDate = ({ classes, isTrainingCompleted = false }: { classes?: stri
                         onSelect={date => date && setTrainingDate(date, 'end_date')}
                         showWeekNumber
                         isFieldDisabled={isTrainingCompleted}
+                        animate
                     />
                 </>
             ) : <StartEndDateSkeleton />

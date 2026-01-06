@@ -4,5 +4,5 @@ interface Props {
     classes?: string,
 }
 export const Tabs: FC<PropsWithChildren<Props>> = ({ classes, children }) => {
-    return <div className={`tabs${classes ? ` ${classes}` : ''}`}>{children}</div>
+    return <div role="tablist" className={`tabs tabs-box${classes ? ` ${classes}` : ''}`}>{children}</div>
 }

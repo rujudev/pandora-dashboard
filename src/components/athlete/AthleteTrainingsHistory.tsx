@@ -168,9 +168,9 @@ const AthleteTrainingsHistory = () => {
     }
 
     useEffect(() => {
-        !isAthleteTrainingsPage && setHeaderConfig(initHeaderPage)
+        setHeaderConfig(initHeaderPage)
         fetchAthleteAndTrainings();
-    }, [athleteId, isAthleteTrainingsPage])
+    }, [])
 
     useEffect(() => {
         if (athlete && isAthleteTrainingsPage) {
@@ -217,7 +217,7 @@ const AthleteTrainingsHistory = () => {
                                             } = training;
 
                                             const isCompleted = isBefore(parseISO(end_date), new Date());
-                                            const isInProgress = blocks.some(block => block.is_active)
+                                            const isInProgress = blocks && blocks.some(block => block.is_active);
                                             const isCommingSoon = isAfter(parseISO(start_date), new Date());
 
                                             console.log({ isCompleted, isInProgress, isCommingSoon })

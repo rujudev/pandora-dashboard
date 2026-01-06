@@ -4,7 +4,7 @@ import { DayPicker, DayPickerProps, getDefaultClassNames, Matcher, PropsMulti, P
 import { es } from 'react-day-picker/locale';
 import { Calendar } from "../Icon";
 
-import 'react-day-picker/dist/style.css';
+import 'react-day-picker/style.css';
 import Card from "../card/Card";
 import CardBody from "../card/CardBody";
 
@@ -83,7 +83,6 @@ export const FieldsetDate: FC<Props> = (props) => {
                                 {...props}
                                 locale={es}
                                 selected={selectedDate}
-                                required={false}
                                 disabled={disabledMatchers}
                                 onDayClick={() => setOpen(!open)}
                                 classNames={{
@@ -92,7 +91,6 @@ export const FieldsetDate: FC<Props> = (props) => {
                                     day_button: `${defaultClassNames.day_button} hover:text-secondary duration-100 ease-linear`,
                                     chevron: `fill-primary hover:fill-secondary duration-100 ease-linear cursor-pointer`
                                 }}
-                                captionLayout="dropdown"
                                 showOutsideDays
                             />
                         </CardBody>

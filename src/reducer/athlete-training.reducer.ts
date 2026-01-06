@@ -219,13 +219,37 @@ export const athleteTrainingReducer = (state: FullTrainingPlan & Partial<Athlete
                                 ...session,
                                 exercises: [
                                     ...session.exercises,
-                                    { ...exercise, id_exercise: session.exercises.length + 1, is_new: true }
+                                    // { ...exercise, id_exercise: session.exercises.length + 1, is_new: true }
+                                    exercise
                                 ]
                             }
                         }),
                     }
                 })
             }
+        }
+
+        if (type === ATHLETE_TRAINING_ACTION_TYPE.EXERCISE.UPDATE) {
+            const { blockId, sessionId, exercise } = payload;
+
+            return {
+                ...state,
+                weekly_blocks: state.weekly_blocks.map(block => {
+                    if (block.id_block !== blockId) return block;
+                    return {
+                        ...block,
+                        sessions: block.sessions.map(session => {
+                            if (session.id_session !== sessionId) return session;
+                            return {
+                                ...session,
+                                exercises: session.exercises.map(prev =>
+                                    prev.id_exercise === exercise.id_exercise ? exercise : prev
+                                ),
+                            };
+                        }),
+                    };
+                }),
+            };
         }
 
         if (type === ATHLETE_TRAINING_ACTION_TYPE.EXERCISE.REMOVE) {
@@ -242,12 +266,10 @@ export const athleteTrainingReducer = (state: FullTrainingPlan & Partial<Athlete
                         sessions: block.sessions.map(session => {
                             if (session.id_session !== sessionId) return session;
 
-                            const filteredExercises = session.exercises
-                                .filter(exercise => exercise.id_exercise !== exerciseId);
-
                             return {
                                 ...session,
-                                exercises: filteredExercises
+                                exercises: session.exercises
+                                    .filter(exercise => exercise.id_exercise !== exerciseId)
                             }
                         })
                     }
@@ -501,7 +523,7 @@ export const athleteTrainingReducer = (state: FullTrainingPlan & Partial<Athlete
                                     return {
                                         ...exercise,
                                         intensities: exercise.intensities.map(intensity => {
-                                            if (intensity.id_intensity === intensityId) return intensity;
+                                            if (intensity.id_intensity !== intensityId) return intensity;
 
                                             return {
                                                 ...intensity,

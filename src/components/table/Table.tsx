@@ -20,15 +20,27 @@ export type Column<T = Record<string, any>> = {
 
 type Props<T extends Record<string, any> = Record<string, any>> = {
     rows: Row<T>[],
+    rowHover?: boolean,
     columns: Column[],
     classes?: string,
     thClasses?: string,
+    trClasses?: string,
     tdClasses?: string,
     checkboxSelection?: boolean,
     disableTHead?: boolean
 }
 
-const Table = <T extends Record<string, any> = Record<string, any>>({ rows, columns, classes, thClasses, tdClasses, checkboxSelection = false, disableTHead }: Props<T>) => {
+const Table = <T extends Record<string, any> = Record<string, any>>({
+    rows,
+    rowHover,
+    columns,
+    classes,
+    thClasses,
+    trClasses,
+    tdClasses,
+    checkboxSelection = false,
+    disableTHead
+}: Props<T>) => {
     const mappedColumns = columns.map(column => {
         let mappedColumn = { ...column };
         const width = column?.width;
@@ -83,7 +95,7 @@ const Table = <T extends Record<string, any> = Record<string, any>>({ rows, colu
                         </tr>
                     </thead>
                 )}
-                <tbody>
+                <tbody {...(rowHover && { className: '[&>tr]:hover:bg-base-200' })}>
                     {
                         rows.map((row, rowIndex) => (
                             <tr key={rowIndex}>

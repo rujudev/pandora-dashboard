@@ -16,7 +16,10 @@ const OpenModalButton = ({ buttonIcon, buttonText, modalId, modalContent, classe
             className={`${classes ? ` ${classes}` : 'flex btn btn-primary gap-2'}`}
             command="show-modal"
             commandfor={modalId}
-            onClick={() => setDialog({ id: modalId, content: modalContent })}
+            onClick={() => {
+                console.log('Opening modal:', modalId);
+                setDialog({ id: modalId, content: modalContent })
+            }}
             {...disabled && { disabled }}
         >
             {buttonIcon}

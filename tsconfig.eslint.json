@@ -1,9 +1,9 @@
 {
-    "extends": "./tsconfig.json",
+    "extends": "./tsconfig.app.json",
     "compilerOptions": {
         "noEmit": true, // No genera archivos de salida
         "skipLibCheck": true, // Opcional: mejora el rendimiento
-        "strictNullChecks": true
+        "strictNullChecks": true,
     },
     "include": [
         "src/**/*.ts",

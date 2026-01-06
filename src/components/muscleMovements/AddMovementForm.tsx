@@ -5,7 +5,7 @@ import { MuscleMovement } from "../../interfaces/movement/muscle-movement.interf
 import { getAllMovements, getMovementsMaxId } from "../../services/movements"
 import { FieldsetText } from "../fieldset"
 import { Tab } from "../tab/Tab"
-import { Tabs } from "../tab/Tabs"
+import { Tabs } from "../tab/TabsBox"
 import ExistingMovementForm from "./ExistingMovementForm"
 
 interface Props {

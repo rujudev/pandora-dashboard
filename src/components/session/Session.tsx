@@ -10,7 +10,7 @@ interface Props {
     session: SessionWithExercisesAndIntensities,
 }
 const Session: FC<Props> = ({ session }) => {
-    const { state, setSessionDayWeek, setSessionDayPeriod, addExercise } = useAthleteTraining();
+    const { state, setSessionDayWeek, setSessionDayPeriod, addExerciseToSession } = useAthleteTraining();
     const muscleMovements = state?.muscle_movements || [];
     const { id_session: sessionId, day_week: dayWeek, day_period: dayPeriod, exercises } = session;
     console.log("Session data:", session);

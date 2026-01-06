@@ -9,7 +9,6 @@ import {
     isSameDay,
     isToday,
     parseISO,
-    setMonth,
     startOfDay
 } from "date-fns";
 import { es } from "date-fns/locale";
@@ -57,12 +56,11 @@ interface Props {
 const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
     const { state, updateWeeklyBlocks, addSession } = useAthleteTraining();
 
-    const trainingId = state?.id_training ?? 0;
     const startDate = state?.start_date ?? '';
     const endDate = state?.end_date ?? '';
     const weeklyBlocks = state?.weekly_blocks ?? [];
 
-    const [existingBlocks, setExistingBlocks] = useState<Record<number, WeeklyBlock[]>>({});
+    const [existingBlocks, setExistingBlocks] = useState<Record<string, WeeklyBlock[]>>({});
     const [selectedBlockDay, setSelectedBlockDay] = useState<selectedBlockDayType | null>(initialSelectedBlockDay);
     const [isBeginning, setIsBeginning] = useState<boolean>(false);
     const [isEnd, setIsEnd] = useState<boolean>(false);
@@ -83,9 +81,9 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
     const getDayNumber = (date: Date, length: number = 2) => formatDate(date, 'd'.repeat(length));
     const getRangeOfDates = (startDate: Date, endDate: Date) => eachDayOfInterval({ start: startDate, end: endDate });
 
-    const handleAddNewSession = (month: number, blockId: number, session: SessionWithExercisesAndIntensities) => {
+    const handleAddNewSession = (monthKey: string, blockId: number, session: SessionWithExercisesAndIntensities) => {
         setExistingBlocks(prevBlocks => {
-            const updatedBlocks = prevBlocks[month].map(prevBlock => {
+            const updatedBlocks = prevBlocks[monthKey].map(prevBlock => {
                 if (prevBlock.id_block !== blockId) return prevBlock;
 
                 const newSession = {
@@ -122,7 +120,7 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
 
             return {
                 ...prevBlocks,
-                [month]: updatedBlocks
+                [monthKey]: updatedBlocks
             };
         });
     };
@@ -149,10 +147,15 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
             setExistingBlocks(existingBlocksGroupedByMonth);
 
             if (Object.keys(existingBlocks).length === 0) {
-                const currentMonthIndex = getMonth(new Date());
-                const existingBlocksCurrentMonthIndex = Object.keys(existingBlocksGroupedByMonth).indexOf(currentMonthIndex.toString());
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonthIndex = getMonth(now) + 1; // 1-12
+                const currentKey = `${currentYear}-${String(currentMonthIndex - 1).padStart(2, '0')}`;
 
-                setInitialMonth(existingBlocksCurrentMonthIndex)
+                const keys = Object.keys(existingBlocksGroupedByMonth);
+                const existingBlocksCurrentMonthIndex = keys.indexOf(currentKey);
+
+                setInitialMonth(existingBlocksCurrentMonthIndex === -1 ? 0 : existingBlocksCurrentMonthIndex)
             }
         }
     }, [stateDateRange, weeklyBlocks]);
@@ -162,9 +165,13 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
         const existingBlocksLength = Object.keys(existingBlocks).length;
         setIsEnd(existingBlocksLength === 1);
 
-        const month = getMonth(selectedBlockDay?.date!);
-        const existingBlock = existingBlocks[month]?.find(
-            block => block.id_block === selectedBlockDay?.blockId
+        const date = selectedBlockDay?.date;
+        const existingBlockKey = date
+            ? `${date.getFullYear()}-${String(getMonth(date) + 1).padStart(2, "0")}`
+            : "";
+
+        const existingBlock = existingBlocks[existingBlockKey]?.find(
+            (block) => block.id_block === selectedBlockDay?.blockId
         );
 
         setSelectedBlockDay(prevSelected => ({
@@ -172,7 +179,6 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
             sessions: existingBlock?.sessions || []
         }));
     }, [existingBlocks, selectedBlockDay?.blockId]);
-
 
     useEffect(() => {
         if (swiperRef.current && initialMonth >= 0) {
@@ -198,19 +204,25 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                 setIsEnd(swiper.isEnd);
             }}
             onSlideChange={(swiper) => {
-
                 setIsBeginning(swiper.isBeginning);
                 setIsEnd(swiper.isEnd);
+
             }}
             className="w-full"
         >
-            {Object.entries(existingBlocks).map(([month, blocks]) => {
-                const date = setMonth(new Date(), parseInt(month, 10));
+            {Object.entries(existingBlocks).map(([monthKey, blocks]) => {
+                const [yearStr, monthStr] = monthKey.split('-');
+                const date = new Date(parseInt(yearStr, 10), parseInt(monthStr, 10), 1);
+                const slideMonthIndex = parseInt(monthStr, 10);
                 const monthName = format(date, 'MMMM', { locale: es });
                 const capitalizedMonthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
+                const isSelectedDayOfBlockInThisMonth =
+                    Boolean(selectedBlockDay) &&
+                    getMonth(selectedBlockDay.date) === slideMonthIndex;
+
                 return (
-                    <SwiperSlide key={month} className="!grid grid-rows-[max-content_1fr]">
+                    <SwiperSlide key={monthKey} className="!grid grid-rows-[max-content_1fr]">
                         <div className="flex flex-col justify-center items-center">
                             <header className="flex items-center gap-4 py-4">
                                 <CustomPrevButton
@@ -218,7 +230,7 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                                     iconClasses="size-10"
                                     isBeginning={isBeginning}
                                 />
-                                <h2 className="text-2xl">{capitalizedMonthName}</h2>
+                                <h2 className="text-2xl">{capitalizedMonthName} - {yearStr}</h2>
                                 <CustomNextButton
                                     classes="custom-next-button size-10"
                                     iconClasses="size-10"
@@ -261,12 +273,12 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                                         });
 
                                     return (
-                                        <div className="grid grid-cols-12 gap-4" key={block.id_block}>
+                                        <div className="grid grid-cols-12 gap-4" key={`${block.id_block}_${block.week_start_date}_${block.week_end_date}`}>
                                             <div className="flex items-center form-control">
                                                 <label className="label gap-3 justify-center w-full">
                                                     <input
                                                         type="checkbox"
-                                                        defaultChecked={!isTrainingCompleted && isActive}
+                                                        defaultChecked={!isTrainingCompleted && isActive && isSelectedDayOfBlockInThisMonth}
                                                         className="toggle toggle-success !opacity-80 !cursor-auto"
                                                         disabled
                                                     />
@@ -316,7 +328,7 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                                             </div>
 
                                             {/* Mostrar periodos del día seleccionado */}
-                                            {selectedBlockDay && selectedBlockDay.blockId === block.id_block && (
+                                            {selectedBlockDay && selectedBlockDay.blockId === block.id_block && isSelectedDayOfBlockInThisMonth && (
                                                 <div className="col-span-12 flex flex-col gap-4">
                                                     {!isTrainingCompleted && !isBeforeToday && (
                                                         <div className="flex justify-end w-full">
@@ -325,12 +337,13 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                                                                 buttonText="Nueva sesión"
                                                                 modalContent={
                                                                     <SessionModalForm
-                                                                        block={selectedBlockDay}
-                                                                        trainingId={trainingId}
-                                                                        muscleMovements={state.muscle_movements}
+                                                                        blockDate={selectedBlockDay.date}
+                                                                        existingSessionsForDay={filteredSessions}
+                                                                        muscleMovements={state?.muscle_movements}
                                                                         onAddSession={(session) => {
-                                                                            const month = getMonth(selectedBlockDay.date);
-                                                                            handleAddNewSession(month, block.id_block!, session);
+                                                                            const date = selectedBlockDay.date;
+                                                                            const monthKey = `${date.getFullYear()}-${String(getMonth(date)).padStart(2, '0')}`;
+                                                                            handleAddNewSession(monthKey, block.id_block!, session);
                                                                         }}
                                                                     />
                                                                 }

@@ -1,9 +1,11 @@
 @import "tailwindcss";
-@import "swiper/css";
 
 @plugin "daisyui" {
     themes: winter, dim;
 }
+
+@import "swiper/css";
+
 
 @plugin "daisyui/theme" {
     name: "dim";

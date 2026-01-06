@@ -50,8 +50,17 @@ const ExerciseModalForm: FC<Props> = ({
     const [exerciseDraft, setExerciseDraft] = useState<ExerciseWithIntensity>(initialExercise ?? initialExerciseState)
     const [movementInfo, setMovementInfo] = useState<MuscleMovementWithWeightRef>(initialSelectedMovement)
     const isEditing = Boolean(initialExercise);
+    const isPristineCreate = !isEditing && isEqual(initialExerciseState, exerciseDraft);
+    const isPristineEdit = isEditing && initialExercise && isEqual(initialExercise, exerciseDraft);
+    const isInvalidForm =
+        !exerciseDraft.id_exercise ||
+        !exerciseDraft.id_movement ||
+        exerciseDraft.intensities.length === 0;
+
+    const isSaveDisabled = isInvalidForm || isPristineCreate || isPristineEdit;
 
     useEffect(() => {
+        console.log(isEditing && isEqual(initialExercise, exerciseDraft))
         getExercises().then(({ data }) => data && setExercises(data as ExerciseWithIntensity[]))
     }, [])
 
@@ -195,7 +204,7 @@ const ExerciseModalForm: FC<Props> = ({
                         <FieldsetSelect
                             legend="Lista de ejercicios"
                             placeholder="Selecciona un ejercicio"
-                            value={exerciseDraft.id_exercise}
+                            value={exerciseDraft.id_exercise || 'null'}
                             options={exercises.map(({ id_exercise, exercise_name }) => ({
                                 id: id_exercise!,
                                 option: exercise_name,
@@ -203,9 +212,9 @@ const ExerciseModalForm: FC<Props> = ({
                             }))}
                             onChange={(e) => {
                                 const exerciseId = Number(e.target.value);
-                                const { abreviation, remarks } = exercises.find(ex => ex.id_exercise === exerciseId)!
+                                const { abreviation, remarks, exercise_name } = exercises.find(ex => ex.id_exercise === exerciseId)!
 
-                                setExerciseDraft((prev) => ({ ...prev, id_exercise: exerciseId, abreviation, remarks }))
+                                setExerciseDraft((prev) => ({ ...prev, id_exercise: exerciseId, abreviation, remarks, exercise_name }))
                             }}
                         />
                         <FieldsetText
@@ -290,7 +299,7 @@ const ExerciseModalForm: FC<Props> = ({
 
                         closeDialog(modalId || '')
                     }}
-                    disabled={isEditing && isEqual(initialExercise, exerciseDraft)}
+                    disabled={isSaveDisabled}
                 >
                     {isEditing ? 'Actualizar ejercicio' : 'Guardar ejercicio'}
                 </Button>
