@@ -1,19 +1,19 @@
-import { format, isAfter, isBefore, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
-import { ReactNode, useEffect, useState } from "react";
-import { Link, Outlet, useLoaderData, useMatch } from "react-router";
-import { useBreadcrumbs } from "../../context/Breadcrumbs.context";
-import { initHeaderPage } from "../../context/header-page.context";
-import { useHeaderPage } from "../../hooks/useHeaderPage";
-import { AthleteTrainingSummary } from "../../interfaces/athlete/athlete-training-summary.interface";
-import { Athlete } from "../../interfaces/athlete/athlete.interface";
-import { ROUTE } from "../../routes/config";
-import { getAthlete } from "../../services/athletes";
-import { getAthleteTrainings } from "../../services/trainings";
-import BackButton from "../headerPage/BackButton";
-import { AddTraining, Calendar, CircleCheck, CircleHour4, Clock, Edit, Eye, ProgressCheck, Trash } from "../Icon";
-import List from "../list/List";
-import ListItem from "../list/ListItem";
+import { format, isAfter, isBefore, parseISO } from "date-fns"
+import { es } from "date-fns/locale"
+import { ReactNode, useEffect, useState } from "react"
+import { Link, Outlet, useLoaderData, useMatch } from "react-router"
+import { useBreadcrumbs } from "../../context/Breadcrumbs.context"
+import { initHeaderPage } from "../../context/header-page.context"
+import { useHeaderPage } from "../../hooks/useHeaderPage"
+import { AthleteTrainingSummary } from "../../interfaces/athlete/athlete-training-summary.interface"
+import { Athlete } from "../../interfaces/athlete/athlete.interface"
+import { ROUTE } from "../../routes/config"
+import { getAthlete } from "../../services/athletes"
+import { getAthleteTrainings } from "../../services/trainings"
+import BackButton from "../headerPage/BackButton"
+import { AddTraining, Calendar, CircleCheck, CircleHour4, Clock, Edit, Eye, ProgressCheck, Trash } from "../Icon"
+import List from "../list/List"
+import ListItem from "../list/ListItem"
 
 const TrainingsSkeleton = () => {
     return (
@@ -61,8 +61,8 @@ const Info = ({ startDate, endDate, weeks, updatedAt, sessions, isInProgress, is
     isCompleted: boolean,
     isCommingSoon: boolean
 }) => {
-    const formatStartDate = format(parseISO(startDate), 'dd MMM yyyy', { locale: es });
-    const formatEndDate = format(parseISO(endDate), 'dd MMM yyyy', { locale: es });
+    const formatStartDate = format(parseISO(startDate), 'dd MMM yyyy', { locale: es })
+    const formatEndDate = format(parseISO(endDate), 'dd MMM yyyy', { locale: es })
     const formatUpdatedAt = format(parseISO(updatedAt), 'dd MMM yyyy', { locale: es })
 
     const getStatus = (): { icon: ReactNode, content: ReactNode } | null => {
@@ -99,7 +99,7 @@ const Info = ({ startDate, endDate, weeks, updatedAt, sessions, isInProgress, is
             }
         }
 
-        return null;
+        return null
     }
 
     return (
@@ -147,10 +147,10 @@ const Sessions = ({ count }: { count: number }) => {
 }
 
 const AthleteTrainingsHistory = () => {
-    const { athleteId } = useLoaderData();
+    const { athleteId } = useLoaderData()
     const [athlete, setAthlete] = useState<Athlete>()
     const [trainings, setTrainings] = useState<AthleteTrainingSummary[]>()
-    const isAthleteTrainingsPage = useMatch('/athletes/:athleteId/trainings');
+    const isAthleteTrainingsPage = useMatch('/athletes/:athleteId/trainings')
     const { setHeaderConfig } = useHeaderPage()
     const { setCrumbs } = useBreadcrumbs()
 
@@ -163,14 +163,15 @@ const AthleteTrainingsHistory = () => {
         if (athleteResult.error) throw new Error(athleteResult.error.message)
         if (trainingsResult.error) throw new Error(trainingsResult.error.message)
 
-        setAthlete(athleteResult.data);
-        setTrainings(trainingsResult.data);
+        console.log('trainingsResult.data', trainingsResult.data)
+        setAthlete(athleteResult.data)
+        setTrainings(trainingsResult.data)
     }
 
     useEffect(() => {
         setHeaderConfig(initHeaderPage)
-        fetchAthleteAndTrainings();
-    }, [])
+        fetchAthleteAndTrainings()
+    }, [isAthleteTrainingsPage])
 
     useEffect(() => {
         if (athlete && isAthleteTrainingsPage) {
@@ -214,11 +215,11 @@ const AthleteTrainingsHistory = () => {
                                                 blocks,
                                                 blocks_count,
                                                 id_training
-                                            } = training;
+                                            } = training
 
-                                            const isCompleted = isBefore(parseISO(end_date), new Date());
-                                            const isInProgress = blocks && blocks.some(block => block.is_active);
-                                            const isCommingSoon = isAfter(parseISO(start_date), new Date());
+                                            const isCompleted = isBefore(parseISO(end_date), new Date())
+                                            const isInProgress = blocks && blocks.some(block => block.is_active)
+                                            const isCommingSoon = isAfter(parseISO(start_date), new Date())
 
                                             console.log({ isCompleted, isInProgress, isCommingSoon })
 

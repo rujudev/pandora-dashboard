@@ -3,6 +3,7 @@ import App from "../App.tsx";
 import AthleteComponent from "../components/athlete/Athlete.tsx";
 import AthleteTrainingsHistory from "../components/athlete/AthleteTrainingsHistory.tsx";
 import { AddTraining, AthletePageIcon, DashboardPageIcon, Movement, TrainingPageIcon } from "../components/Icon.tsx";
+import { CreatePage } from "../components/training/CreatePage.tsx";
 import { AthleteTrainingContextWrapper } from "../context/athlete-training.context.tsx";
 import { BreadcrumbsProvider } from "../context/Breadcrumbs.context.tsx";
 import ButtonStateProvider from "../context/button-state.context.tsx";
@@ -11,9 +12,10 @@ import Athletes from "../pages/Athletes.tsx";
 import ExercisesPage from "../pages/Exercises.tsx";
 import Home from "../pages/Home.tsx";
 import MovementsPage from "../pages/Movements.tsx";
-import Trainings from "../pages/Trainings.tsx";
+import TrainingsPage from "../pages/Trainings.tsx";
 import { getAthlete } from "../services/athletes.ts";
 import { CrumbData } from "../types/breadcrumb.types.ts";
+
 export const ROUTE = {
   HOME: '/',
   ATHLETES: '/athletes',
@@ -23,6 +25,7 @@ export const ROUTE = {
   ATHLETE_TRAINING_EDIT: (athleteId: number | string, trainingId: number | string) =>
     `/athletes/${athleteId}/trainings/${trainingId}/edit`,
   TRAININGS: '/trainings',
+  CREATE_TRAINING: '/trainings/create',
   EXERCISES: '/exercises',
   MUSCLE_MOVEMENTS: '/muscle-movements'
 };
@@ -96,11 +99,22 @@ export const routes = [
     name: "Entrenamientos",
     path: ROUTE.TRAININGS.replace(/^\//, ""),
     icon: <TrainingPageIcon classes="opacity-30" />,
-    element: <Trainings />,
+    element: <TrainingsPage />,
     loader: async () => ({ label: "Entrenamientos" }),
     handle: {
       crumb: (crumbData: CrumbData) => ({ label: crumbData?.label }),
     },
+    children: [
+      {
+        path: 'create',
+        name: "Crear Entrenamiento",
+        element: <CreatePage />,
+        loader: async () => ({ label: "Crear Entrenamiento", isLast: true }),
+        handle: {
+          crumb: (crumbData: CrumbData) => ({ label: crumbData?.label, isLast: crumbData.isLast })
+        },
+      }
+    ]
   },
   {
     name: "Ejercicios",

@@ -12,11 +12,11 @@ import {
     startOfDay
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Swiper as SwiperType } from 'swiper';
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useAthleteTraining } from "../../hooks/useAthleteTraining";
+import { MuscleMovementWithWeightRef } from "../../interfaces/movement/muscle-movement-weight.interface";
 import { SessionWithExercisesAndIntensities } from "../../interfaces/session/session-with-exercises-and-intensities.interface";
 import { WeeklyBlock } from "../../interfaces/session/weekly-blocks.interface";
 import { DAY_PERIODS, DayPeriod, DAYS_OF_WEEK, DayWeek } from "../../types/day.types";
@@ -49,33 +49,28 @@ const initialSelectedBlockDay: selectedBlockDayType = {
 
 // ... (SessionsSkeleton sigue igual) ...
 
-interface Props {
-    isTrainingCompleted: boolean
+interface SessionsProps {
+    startDate?: string;
+    endDate?: string;
+    movements?: MuscleMovementWithWeightRef[];
+    weeklyBlocks?: WeeklyBlock[];
+    isTrainingCompleted?: boolean;
+    onAddSession?: (block: WeeklyBlock, session: SessionWithExercisesAndIntensities) => void;
 }
 
-const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
-    const { state, updateWeeklyBlocks, addSession } = useAthleteTraining();
-
-    const startDate = state?.start_date ?? '';
-    const endDate = state?.end_date ?? '';
-    const weeklyBlocks = state?.weekly_blocks ?? [];
-
+const Sessions = ({
+    startDate = '',
+    endDate = '',
+    movements = [],
+    weeklyBlocks = [],
+    isTrainingCompleted = false,
+    onAddSession
+}: SessionsProps) => {
     const [existingBlocks, setExistingBlocks] = useState<Record<string, WeeklyBlock[]>>({});
     const [selectedBlockDay, setSelectedBlockDay] = useState<selectedBlockDayType | null>(initialSelectedBlockDay);
     const [isBeginning, setIsBeginning] = useState<boolean>(false);
     const [isEnd, setIsEnd] = useState<boolean>(false);
-    const [initialMonth, setInitialMonth] = useState<number>(0);
-
     const swiperRef = useRef<SwiperType | null>(null);
-
-    // Memoizar cálculos pesados
-    const stateDateRange = useMemo(() => {
-        if (!startDate || !endDate) return null;
-        return {
-            start: parseISO(startDate),
-            end: parseISO(endDate)
-        };
-    }, [startDate, endDate]);
 
     const isSameWeekDay = (day: DayWeek, weekDay: Date) => getDay(weekDay) === dayWeekToNumber(day);
     const getDayNumber = (date: Date, length: number = 2) => formatDate(date, 'd'.repeat(length));
@@ -96,7 +91,7 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
 
                 const sessions = [...prevBlock.sessions, newSession];
 
-                addSession(prevBlock, newSession);
+                onAddSession && onAddSession(prevBlock, newSession);
 
                 setSelectedBlockDay(prev => {
                     return {
@@ -127,38 +122,39 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
 
     // Efecto principal para generar bloques
     useEffect(() => {
-        if (stateDateRange) {
-            const updatedBlocks = generateWeeklyBlocks(
-                stateDateRange.start,
-                stateDateRange.end,
-                weeklyBlocks,
-                {
-                    assignIds: true,
-                    preserveExisting: true,
-                }
-            );
+        const updatedBlocks = generateWeeklyBlocks(
+            parseISO(startDate),
+            parseISO(endDate),
+            weeklyBlocks,
+            {
+                assignIds: true,
+                preserveExisting: true,
+            }
+        );
 
-            const existingBlocksGroupedByMonth = generateMonthBlocks(
-                stateDateRange.start,
-                stateDateRange.end,
-                updatedBlocks
-            );
+        const existingBlocksGroupedByMonth = generateMonthBlocks(
+            parseISO(startDate),
+            parseISO(endDate),
+            updatedBlocks
+        );
 
-            setExistingBlocks(existingBlocksGroupedByMonth);
+        setExistingBlocks(existingBlocksGroupedByMonth);
 
-            if (Object.keys(existingBlocks).length === 0) {
-                const now = new Date();
-                const currentYear = now.getFullYear();
-                const currentMonthIndex = getMonth(now) + 1; // 1-12
-                const currentKey = `${currentYear}-${String(currentMonthIndex - 1).padStart(2, '0')}`;
+        if (Object.keys(existingBlocks).length === 0) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonthIndex = getMonth(now) + 1; // 1-12
+            const currentKey = `${currentYear}-${String(currentMonthIndex - 1).padStart(2, '0')}`;
 
-                const keys = Object.keys(existingBlocksGroupedByMonth);
-                const existingBlocksCurrentMonthIndex = keys.indexOf(currentKey);
+            const keys = Object.keys(existingBlocksGroupedByMonth);
+            const existingBlocksCurrentMonthIndex = keys.indexOf(currentKey);
 
-                setInitialMonth(existingBlocksCurrentMonthIndex === -1 ? 0 : existingBlocksCurrentMonthIndex)
+            if (swiperRef.current) {
+                const index = existingBlocksCurrentMonthIndex === -1 ? 0 : existingBlocksCurrentMonthIndex;
+                swiperRef.current.slideTo(index, 0)
             }
         }
-    }, [stateDateRange, weeklyBlocks]);
+    }, [startDate, endDate]);
 
     // Efecto para manejar cambios en bloques existentes
     useEffect(() => {
@@ -180,13 +176,7 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
         }));
     }, [existingBlocks, selectedBlockDay?.blockId]);
 
-    useEffect(() => {
-        if (swiperRef.current && initialMonth >= 0) {
-            swiperRef.current.slideTo(initialMonth, 0);
-        }
-    }, [initialMonth])
-
-    if (!state) {
+    if (!startDate && !endDate && !weeklyBlocks) {
         return <SessionsSkeleton />;
     }
 
@@ -220,6 +210,7 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                 const isSelectedDayOfBlockInThisMonth =
                     Boolean(selectedBlockDay) &&
                     getMonth(selectedBlockDay.date) === slideMonthIndex;
+                console.log(blocks)
 
                 return (
                     <SwiperSlide key={monthKey} className="!grid grid-rows-[max-content_1fr]">
@@ -249,10 +240,10 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                         {blocks.length > 0 && (
                             <div className="flex flex-col justify-evenly gap-3">
                                 {blocks.map(block => {
-                                    const startDate = parseISO(block.week_start_date);
-                                    const endDate = parseISO(block.week_end_date);
+                                    const weekStartDate = parseISO(block.week_start_date);
+                                    const weekEndDate = parseISO(block.week_end_date);
                                     const isActive = block.is_active;
-                                    const rangeOfDates = getRangeOfDates(startDate, endDate);
+                                    const rangeOfDates = getRangeOfDates(weekStartDate, weekEndDate);
                                     const isBeforeToday = isBefore(
                                         startOfDay(selectedBlockDay?.date!),
                                         startOfDay(new Date())
@@ -288,8 +279,11 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                                             <div className="col-span-11 grid grid-cols-7 justify-items-center gap-2 p-4">
                                                 {rangeOfDates.map((date, index) => {
                                                     const isSelected = isSameDay(date, selectedBlockDay?.date!);
-                                                    const isInRange = !isBefore(date, parseISO(state.start_date)) &&
-                                                        !isAfter(date, parseISO(state.end_date));
+                                                    const isInRange =
+                                                        !isBefore(date, parseISO(startDate)) &&
+                                                        !isAfter(date, parseISO(endDate)) ||
+                                                        isSameDay(date, parseISO(startDate)) ||
+                                                        isSameDay(date, parseISO(endDate));
 
                                                     const isInRangeClass = !isInRange ? ' opacity-40' : ' cursor-pointer';
                                                     const isTodayNotSelectedClass = (isToday(date) && !isSelected) || (!isInRange && isToday(date)) ? ' bg-primary opacity-40' : '';
@@ -308,6 +302,12 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
 
                                                                 const isSameBlock = selectedBlockDay?.blockId === block.id_block;
                                                                 const isSameDate = isSameDay(selectedBlockDay?.date!, date);
+                                                                console.log({
+                                                                    blockId: isSameBlock && isSameDate ? 0 : block.id_block!,
+                                                                    sessions,
+                                                                    selectedPeriod,
+                                                                    date: isSameBlock && isSameDate ? new Date() : date
+                                                                });
 
                                                                 setSelectedBlockDay({
                                                                     blockId: isSameBlock && isSameDate ? 0 : block.id_block!,
@@ -339,7 +339,7 @@ const Sessions: FC<Props> = ({ isTrainingCompleted = false }) => {
                                                                     <SessionModalForm
                                                                         blockDate={selectedBlockDay.date}
                                                                         existingSessionsForDay={filteredSessions}
-                                                                        muscleMovements={state?.muscle_movements}
+                                                                        muscleMovements={movements}
                                                                         onAddSession={(session) => {
                                                                             const date = selectedBlockDay.date;
                                                                             const monthKey = `${date.getFullYear()}-${String(getMonth(date)).padStart(2, '0')}`;

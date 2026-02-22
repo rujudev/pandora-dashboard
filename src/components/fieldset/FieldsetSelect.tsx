@@ -16,10 +16,21 @@ type Props = {
     required?: boolean;
     classes?: string;
     disabled?: boolean;
+    multiple?: boolean;
     onChange?: (e: ChangeEvent<HTMLSelectElement>) => void
 }
 
-export const FieldsetSelect: FC<Props> = ({ options, legend, value, placeholder, onChange, classes, disabled = false, required = false }) => {
+export const FieldsetSelect: FC<Props> = ({
+    options,
+    legend,
+    value,
+    placeholder,
+    onChange,
+    classes,
+    disabled = false,
+    required = false,
+    multiple = false
+}) => {
     return (
         <fieldset className={`fieldset relative w-full${classes ? ` ${classes}` : ''}`}>
             <legend className="fieldset-legend">{`${legend}${required ? ' *' : ''}`}</legend>
@@ -29,6 +40,7 @@ export const FieldsetSelect: FC<Props> = ({ options, legend, value, placeholder,
                 onChange={onChange}
                 required={required}
                 disabled={disabled}
+                multiple={multiple}
             >
                 <option value="null" disabled={true}>{placeholder}</option>
                 {options?.map(({ id, option, disabled }) => (

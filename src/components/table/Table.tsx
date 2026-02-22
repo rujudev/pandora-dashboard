@@ -97,7 +97,7 @@ const Table = <T extends Record<string, any> = Record<string, any>>({
                 )}
                 <tbody {...(rowHover && { className: '[&>tr]:hover:bg-base-200' })}>
                     {
-                        rows.map((row, rowIndex) => (
+                        rows.length > 0 ? rows.map((row, rowIndex) => (
                             <tr key={rowIndex}>
                                 {
                                     mappedColumns.map(({ field, render }, colIndex) => {
@@ -128,7 +128,13 @@ const Table = <T extends Record<string, any> = Record<string, any>>({
                                     })
                                 }
                             </tr>
-                        ))
+                        )) : (
+                            <tr>
+                                <td colSpan={mappedColumns.length} className="text-center py-4">
+                                    No hay entrenamientos disponibles.
+                                </td>
+                            </tr>
+                        )
                     }
                 </tbody>
             </table>

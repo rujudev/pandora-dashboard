@@ -37,6 +37,12 @@ export const getTraining = async (id: number | string) => {
         .eq('id_training', id);
 }
 
+export const getTrainings = async () => {
+    return await supabaseClient
+        .from('training_templates_summary_view')
+        .select('*');
+}
+
 type UpdateAthleteTrainingParams = {
     idAthlete: number;
     idTraining: number;
@@ -52,108 +58,6 @@ type UpdateAthleteTrainingParams = {
     // bloques semanales con TODA la estructura (sessions, exercises, intensities, sets…)
     weeklyBlocks: WeeklyBlock[];
 };
-
-// export const updateAthleteTraining = async (
-//     currentTraining: FullTrainingPlan,
-//     trainingUpdatedFields: Partial<FullTrainingPlan>,
-//     onUpdate?: (updatedFields: Partial<FullTrainingPlan>) => void
-// ): Promise<void> => {
-//     let toUpdate: Partial<FullTrainingPlan> = {};
-
-//     if (trainingUpdatedFields['start_date']) {
-//         const { error } = await supabaseClient
-//             .from('training')
-//             .update({ start_date: trainingUpdatedFields.start_date })
-//             .eq('id_training', currentTraining.id_training)
-//             .select('*')
-//             .single();
-
-//         if (error) {
-//             console.error('Error updating training end date:', error);
-//         }
-//     }
-
-//     if (trainingUpdatedFields['end_date']) {
-//         const { error } = await supabaseClient
-//             .from('training')
-//             .update({ end_date: trainingUpdatedFields.end_date })
-//             .eq('id_training', currentTraining.id_training)
-//             .select('*')
-//             .single();
-
-//         if (error) {
-//             console.error('Error updating training end date:', error);
-//         }
-//     }
-
-//     if (trainingUpdatedFields['muscle_movements']) {
-//         const movements = trainingUpdatedFields['muscle_movements'];
-//         const hasNewMovementsAssigned = movements.some(m => m.is_new_assigned);
-
-//         if (hasNewMovementsAssigned) {
-//             const movementsAssigned = movements
-//                 .filter(m => m.is_new_assigned)
-//                 .map(m => ({
-//                     id_training: currentTraining.id_training,
-//                     id_movement: m.id_movement,
-//                     weight_ref: m.weight_ref
-//                 }));
-
-//             const { error } = await supabaseClient
-//                 .from('training_movements')
-//                 .insert(movementsAssigned)
-
-//             if (error) throw new Error('No se han podido guardar los cambios', error)
-//         } else {
-//             const movements = trainingUpdatedFields.muscle_movements.map(movement => ({
-//                 id_training: currentTraining.id_training,
-//                 id_movement: movement.id_movement,
-//                 weight_ref: movement.weight_ref
-//             }))
-
-//             const { error } = await supabaseClient
-//                 .from('training_movements')
-//                 .upsert(movements, { onConflict: 'id_training,id_movement' })
-//                 .select('*');
-
-//             if (error) throw new Error(error.message)
-//         }
-//     }
-
-//     if (trainingUpdatedFields['weekly_blocks']) {
-//         const rangeDataUpdatedBlocks = trainingUpdatedFields['weekly_blocks']
-//         const [weeklyBlocks, newWeeklyBlocks] = [
-//             rangeDataUpdatedBlocks.filter(b => !b.is_new),
-//             rangeDataUpdatedBlocks.filter(b => b.is_new)
-//         ]
-
-//         if (weeklyBlocks.length > 0) updateWeeklyBlocks(weeklyBlocks, currentTraining.id_training);
-//         if (newWeeklyBlocks.length > 0) {
-//             const inserted = await addWeeklyBlocks(newWeeklyBlocks, currentTraining.id_training);
-
-//             if (onUpdate) {
-//                 const updatedWeeklyBlocks = rangeDataUpdatedBlocks.map(b => {
-//                     if (inserted.some(i => i.week_start_date === b.week_start_date && i.week_end_date === b.week_end_date)) {
-//                         const insertedBlock = inserted.find(i => i.week_start_date === b.week_start_date && i.week_end_date === b.week_end_date)!;
-
-//                         return {
-//                             ...b,
-//                             id_block: insertedBlock.id_block,
-//                         };
-//                     }
-
-//                     return b;
-//                 })
-
-//                 toUpdate['weekly_blocks'] = updatedWeeklyBlocks;
-//             }
-//         }
-//     }
-
-//     if (Object.keys(toUpdate).length > 0 && onUpdate) {
-//         onUpdate(toUpdate);
-//     }
-// }
 
 /**
  * Actualiza un entrenamiento ya creado y asignado a un atleta a partir
@@ -218,7 +122,6 @@ export const updateAthleteTraining = async (
             weight_ref: m.weight_ref,
         }));
 
-    debugger;
     if (movementRows.length > 0) {
         const { error: insMovError } = await supabaseClient
             .from("training_movements")
@@ -226,13 +129,9 @@ export const updateAthleteTraining = async (
         if (insMovError) throw insMovError;
     }
 
-    debugger;
-
     // 4) reemplazar toda la estructura de semanas / sesiones / ejercicios
     await replaceTrainingWeeklyStructure({
         idTraining,
         weeklyBlocks: fullPlan.weekly_blocks as WeeklyBlock[],
     });
-
-    debugger;
 };

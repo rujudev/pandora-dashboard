@@ -20,6 +20,7 @@ export const BreadcrumbsProvider: FC<{ children: React.ReactNode }> = ({ childre
         // marcar el último como isLast = true
         if (c.length > 0) {
             const mapped = c.map((cr, i) => ({ ...cr, isLast: i === c.length - 1 }));
+            console.log('setCrumbs', mapped);
             setCrumbsState(mapped);
         } else {
             setCrumbsState([]);

@@ -5,14 +5,13 @@ const Breadcrumbs = () => {
     const { crumbs } = useBreadcrumbs();
 
     return (
-        <div className="flex flex-col gap-2">
-            <ol className="flex flex-wrap gap-2">
+        <div className="breadcrumbs flex flex-col gap-2">
+            <ul className="flex flex-wrap">
                 {Array.isArray(crumbs) ? (
                     <>
                         {crumbs.map((crumb: Crumb, index) => (
-                            <li key={index} className="flex gap-2">
+                            <li key={index}>
                                 <Breadcrumb crumb={crumb} />
-                                {!crumb.isLast && <span className="font-sans text-sm leading-normal font-normal">/</span>}
                             </li>
                         ))}
                     </>
@@ -26,7 +25,7 @@ const Breadcrumbs = () => {
                         ))}
                     </>
                 )}
-            </ol>
+            </ul>
         </div>
     )
 }

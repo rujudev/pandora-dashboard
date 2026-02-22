@@ -1,7 +1,14 @@
 import { parseISO } from 'date-fns';
 import 'react-day-picker/style.css';
-import { useAthleteTraining } from "../../hooks/useAthleteTraining";
-import { FieldsetDate } from '../fieldset';
+import { FieldsetDate } from './fieldset';
+
+interface StartEndDateProps {
+    classes?: string;
+    isTrainingCompleted?: boolean;
+    startDate?: string;
+    endDate?: string;
+    onDateChange: (date: Date | null, field: 'start_date' | 'end_date') => void;
+}
 
 const StartEndDateSkeleton = () => (
     <>
@@ -15,22 +22,27 @@ const StartEndDateSkeleton = () => (
         </div>
     </>
 )
-const StartEndDate = ({ classes, isTrainingCompleted = false }: { classes?: string, isTrainingCompleted: boolean }) => {
-    const { state, setTrainingDate } = useAthleteTraining()
 
+const StartEndDate = ({
+    classes,
+    isTrainingCompleted = false,
+    onDateChange,
+    startDate,
+    endDate
+}: StartEndDateProps) => {
     return (
         <div {...classes ? { className: classes } : null}>
-            {state ? (
+            {startDate && endDate ? (
                 <>
                     <FieldsetDate
                         mode="single"
                         legend="Fecha inicio"
                         placeholder="Selecciona una fecha"
-                        selected={parseISO(state.start_date)}
-                        onSelect={date => date && setTrainingDate(date, 'start_date')}
+                        selected={startDate ? parseISO(startDate) : parseISO(new Date().toISOString())}
+                        onSelect={date => date && onDateChange(date, 'start_date')}
                         disabled={[
-                            parseISO(state.start_date),
-                            { before: new Date(), after: parseISO(state.end_date) }
+                            parseISO(startDate),
+                            { before: new Date(), after: parseISO(endDate) }
                         ]}
                         showWeekNumber
                         isFieldDisabled={isTrainingCompleted}
@@ -40,12 +52,12 @@ const StartEndDate = ({ classes, isTrainingCompleted = false }: { classes?: stri
                         mode="single"
                         legend="Fecha fin"
                         placeholder="Selecciona una fecha"
-                        selected={parseISO(state.end_date)}
+                        selected={endDate ? parseISO(endDate) : parseISO(new Date().toISOString())}
                         disabled={[
-                            parseISO(state.end_date),
+                            parseISO(endDate),
                             { before: new Date() }
                         ]}
-                        onSelect={date => date && setTrainingDate(date, 'end_date')}
+                        onSelect={date => date && onDateChange(date, 'end_date')}
                         showWeekNumber
                         isFieldDisabled={isTrainingCompleted}
                         animate

@@ -6,7 +6,6 @@ import { Plus } from "../components/Icon";
 import AthleteActions from "../components/table/AthleteActions";
 import Table, { Column } from "../components/table/Table";
 import { useBreadcrumbs } from "../context/Breadcrumbs.context";
-import { initHeaderPage } from "../context/header-page.context";
 import { useHeaderPage } from "../hooks/useHeaderPage";
 import { Athlete } from "../interfaces/athlete/athlete.interface";
 import { getAthletes } from "../services/athletes";
@@ -58,14 +57,11 @@ const Athletes = () => {
     }
 
     useEffect(() => {
-        !isAthletesPage && setHeaderConfig(initHeaderPage)
-        getAthletesData()
-    }, [isAthletesPage])
-
-    useEffect(() => {
         setCrumbs([
             { label: 'Atletas', path: '/athletes' },
         ])
+
+        getAthletesData()
 
         isAthletesPage &&
             setHeaderConfig({

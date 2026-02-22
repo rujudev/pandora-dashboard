@@ -137,23 +137,45 @@ export const generateWeeklyBlocks = (
      */
     if (preserveExisting) {
         existingBlocks.forEach(block => {
-            const blockStart = parseISO(block.week_start_date);
-            const blockEnd = parseISO(block.week_end_date);
+            const originalStart = parseISO(block.week_start_date);
+
+            // const blockStart = parseISO(block.week_start_date);
+            // const blockEnd = parseISO(block.week_end_date);
+
+            const { start: blockStart, end: blockEnd } = createWeekRange(originalStart);
+
+            // 2) Recortar el bloque al nuevo rango por seguridad
+            const adjustedStart = isBefore(blockStart, startDate) ? startDate : blockStart;
+            const adjustedEnd = isAfter(blockEnd, endDate) ? endDate : blockEnd;
+
+            // 3) Si después de recortar start > end (caso 19–16 que ves en la tabla), también lo ignoramos.
+            if (isAfter(adjustedStart, adjustedEnd)) return;
 
             // Semana lógica completa del bloque original (por configuración).
-            const monday = startOfWeek(blockStart, { weekStartsOn: WEEK_CONFIG.startDay });
-            const sunday = addDays(monday, WEEK_CONFIG.daysInWeek - 1);
+            // const monday = startOfWeek(blockStart, { weekStartsOn: WEEK_CONFIG.startDay });
+            // const sunday = addDays(monday, WEEK_CONFIG.daysInWeek - 1);
 
             // Ajustamos esta semana al rango del entrenamiento.
-            const newStart = isBefore(monday, startDate) ? startDate : monday;
-            const newEnd = isAfter(sunday, endDate) ? endDate : sunday;
+            // const newStart = isBefore(monday, startDate) ? startDate : monday;
+            // const newEnd = isAfter(sunday, endDate) ? endDate : sunday;
 
-            const key = `${format(newStart, 'yyyy-MM-dd')}_${format(newEnd, 'yyyy-MM-dd')}`;
+            const key = `${format(adjustedStart, "yyyy-MM-dd")}_${format(adjustedEnd, "yyyy-MM-dd")}`;
+
+            const existing = allBlocks.get(key);
+
             allBlocks.set(key, {
+                ...(existing ?? {}),
                 ...block,
-                week_start_date: format(newStart, 'yyyy-MM-dd'),
-                week_end_date: format(newEnd, 'yyyy-MM-dd'),
+                week_start_date: format(adjustedStart, "yyyy-MM-dd"),
+                week_end_date: format(adjustedEnd, "yyyy-MM-dd"),
             });
+
+            // const key = `${format(newStart, 'yyyy-MM-dd')}_${format(newEnd, 'yyyy-MM-dd')}`;
+            // allBlocks.set(key, {
+            //     ...block,
+            //     week_start_date: format(newStart, 'yyyy-MM-dd'),
+            //     week_end_date: format(newEnd, 'yyyy-MM-dd'),
+            // });
         });
     }
 
@@ -310,10 +332,12 @@ export const generateMonthBlocks = (
         const month = getMonth(pieceStart);
         const key = `${year}-${String(month).padStart(2, '0')}`; // clave "YYYY-MM"
 
+        console.log(piece.id_block, nextId++);
+
         (blocksByMonth[key] ||= []).push({
             ...piece,
             // Si no tiene id_block (o es 0), le asignamos un id incremental local.
-            id_block: piece.id_block && piece.id_block !== 0 ? piece.id_block : nextId++
+            id_block: piece.id_block !== 0 && piece.id_block !== nextId ? piece.id_block : nextId++
         });
     };
 
@@ -417,6 +441,8 @@ export const replaceTrainingWeeklyStructure = async ({
             .from("weekly_blocks")
             .delete()
             .in("id_block", blockIds);
+
+        debugger;
         if (delBlocks) throw delBlocks;
     }
 

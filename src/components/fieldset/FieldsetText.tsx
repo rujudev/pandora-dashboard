@@ -12,6 +12,7 @@ type Props = {
     classes?: string,
     inputClasses?: string,
     isFieldDisabled?: boolean,
+    onBlur?: (e: ChangeEvent<HTMLInputElement>) => void | undefined,
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void | undefined
 }
 
@@ -27,6 +28,7 @@ export const FieldsetText: FC<Props> = ({
     full = true,
     readOnly = false,
     isFieldDisabled = false,
+    onBlur,
     onChange
 }) => {
     return (
@@ -38,6 +40,7 @@ export const FieldsetText: FC<Props> = ({
                 id={id}
                 type="text"
                 className={`input${full ? ' w-full' : ''}${inputClasses ? ` ${inputClasses}` : ''}${readOnly ? ' opacity-[0.5] cursor-default focus:outline-none focus:ring-0 pointer-events-none' : ''}`}
+                {...onBlur && { onBlur }}
                 {...placeholder && { placeholder }}
                 {...(value || (!value && !defaultValue)) && { value: value ?? '', onChange: undefined }}
                 {...defaultValue && { defaultValue }}
